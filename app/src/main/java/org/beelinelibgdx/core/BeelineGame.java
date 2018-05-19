@@ -1,4 +1,15 @@
-package org.moz.beeline;
+package org.moz.beelinelibgdx.core;
+
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.FPSLogger;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+
+import org.moz.beelinelibgdx.core.assets.BeelineAssetManager;
+import org.moz.beelinelibgdx.core.util.BeelineLogger;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -8,16 +19,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.FPSLogger;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import org.moz.beeline.actors.BeelineAssetManager;
-import org.moz.beeline.util.BeelineLogger;
 
 public abstract class BeelineGame<G extends Serializable, A extends BeelineAssetManager> extends Game {
 
@@ -38,7 +39,7 @@ public abstract class BeelineGame<G extends Serializable, A extends BeelineAsset
 	public void create() {
 		BeelineLogger.log(this.getClass().getSimpleName(), "Creating game");
 
-		assets = createBeelineAssets();
+		assets = createBeelineAssetManager();
 
 		OrthographicCamera camera = new OrthographicCamera();
 		viewport = new StretchViewport(getWidth(), getHeight(), camera);
@@ -101,7 +102,7 @@ public abstract class BeelineGame<G extends Serializable, A extends BeelineAsset
 		return viewport;
 	}
 
-	protected abstract A createBeelineAssets();
+	protected abstract A createBeelineAssetManager();
 
 	public static int getWidth() {
 		return width;

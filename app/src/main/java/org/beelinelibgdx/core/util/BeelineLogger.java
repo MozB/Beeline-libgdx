@@ -1,4 +1,4 @@
-package org.moz.beeline.util;
+package org.moz.beelinelibgdx.core.util;
 
 import com.badlogic.gdx.Gdx;
 

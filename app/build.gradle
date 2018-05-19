@@ -1,0 +1,52 @@
+apply plugin: 'com.android.application'
+
+configurations { natives }
+
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        applicationId "org.beelinelibgdx"
+        minSdkVersion 15
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+def gdxVersion = '1.9.6'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+    testImplementation "org.mockito:mockito-core:1.+"
+    testImplementation group: 'org.powermock', name: 'powermock-api-mockito', version: '1.6.6'
+    testImplementation group: 'org.powermock', name: 'powermock-module-junit4', version: '1.6.6'
+    implementation group: 'com.google.guava', name: 'guava', version: '19.0'
+    implementation group: 'commons-lang', name: 'commons-lang', version: '2.6'
+
+    //android
+//    implementation "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
+//    implementation 'com.anjlab.android.iab.v3:library:1.0.44'
+//    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
+//    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
+//    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
+//    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
+//    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
+
+    //desktop
+//    testImplementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+//    testImplementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+//    testImplementation "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+}
