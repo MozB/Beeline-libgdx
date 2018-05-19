@@ -1,4 +1,4 @@
-package org.moz.beeline.actors;
+package org.beelinelibgdx.actors;
 
 import java.util.List;
 
@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.google.common.collect.Lists;
 
 public abstract class BeelineAssetManager {
 

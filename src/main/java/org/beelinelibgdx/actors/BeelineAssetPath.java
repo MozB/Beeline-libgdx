@@ -1,4 +1,4 @@
-package org.moz.beeline.actors;
+package org.beelinelibgdx.actors;
 
 public interface BeelineAssetPath {
 

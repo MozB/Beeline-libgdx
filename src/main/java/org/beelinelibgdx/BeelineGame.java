@@ -1,4 +1,4 @@
-package org.moz.beeline;
+package org.beelinelibgdx;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -16,8 +16,8 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import org.moz.beeline.actors.BeelineAssetManager;
-import org.moz.beeline.util.BeelineLogger;
+import org.beelinelibgdx.actors.BeelineAssetManager;
+import org.beelinelibgdx.util.BeelineLogger;
 
 public abstract class BeelineGame<G extends Serializable, A extends BeelineAssetManager> extends Game {
 
