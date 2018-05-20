@@ -1,5 +1,11 @@
 apply plugin: 'java'
 
+sourceCompatibility = 1.6
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+sourceSets.main.java.srcDirs = [ "src/main/" ]
+sourceSets.test.java.srcDirs = [ "src/test/"]
+
 repositories {
     mavenLocal()
     mavenCentral()
@@ -16,5 +22,4 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '19.0'
 
     testCompile "junit:junit:4.12"
-
 }
