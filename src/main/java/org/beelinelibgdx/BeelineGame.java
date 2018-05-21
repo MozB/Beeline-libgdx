@@ -17,28 +17,31 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.beelinelibgdx.actors.BeelineAssetManager;
+import org.beelinelibgdx.tooling.BeelineToolingConfig;
 import org.beelinelibgdx.util.BeelineLogger;
 
-public abstract class BeelineGame<G extends Serializable, A extends BeelineAssetManager> extends Game {
+public abstract class BeelineGame<G extends Serializable> extends Game {
 
-	private A assets;
+	private BeelineAssetManager assets;
 	private StretchViewport viewport;
 	private static int width;
 	private static int height;
+	private final BeelineToolingConfig config;
 	@SuppressWarnings("unused")
 	private FPSLogger fpsLogger = new FPSLogger();
 
 	@SuppressWarnings("static-access")
-	public BeelineGame(int width, int height) {
+	public BeelineGame(int width, int height, BeelineToolingConfig config) {
 		this.width = width;
 		this.height = height;
+		this.config = config;
 	}
 
 	@Override
 	public void create() {
 		BeelineLogger.log(this.getClass().getSimpleName(), "Creating game");
 
-		assets = createBeelineAssets();
+		assets = new BeelineAssetManager(config);
 
 		OrthographicCamera camera = new OrthographicCamera();
 		viewport = new StretchViewport(getWidth(), getHeight(), camera);
@@ -101,8 +104,6 @@ public abstract class BeelineGame<G extends Serializable, A extends BeelineAsset
 		return viewport;
 	}
 
-	protected abstract A createBeelineAssets();
-
 	public static int getWidth() {
 		return width;
 	}
@@ -111,7 +112,7 @@ public abstract class BeelineGame<G extends Serializable, A extends BeelineAsset
 		return height;
 	}
 
-	public A getAssets() {
+	public BeelineAssetManager getAssetManager() {
 		return assets;
 	}
 

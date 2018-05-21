@@ -1,7 +1,5 @@
 package org.beelinelibgdx.actors;
 
-import java.util.List;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
@@ -9,29 +7,56 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.g2d.PixmapPacker;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.tools.bmfont.BitmapFontWriter;
+import com.badlogic.gdx.tools.hiero.Hiero;
+import com.badlogic.gdx.tools.texturepacker.TexturePacker;
+import com.google.common.collect.Lists;
 
-public abstract class BeelineAssetManager {
+import org.beelinelibgdx.tooling.BeelineToolingConfig;
+
+import java.util.List;
+
+public class BeelineAssetManager {
 
 	private final String atlasPath;
 	private AssetManager manager;
 	private Preferences preferences;
 
-	public BeelineAssetManager() {
-		int spriteSheetSize;
+	public BeelineAssetManager(BeelineToolingConfig config) {
+		int size;
 		if (GL20.GL_MAX_TEXTURE_SIZE == 2048) {
-			spriteSheetSize = 2048;
+			size = 2048;
 		} else {
-			spriteSheetSize = 4096;
+			size = 4096;
 		}
-		atlasPath = "imgout" + spriteSheetSize + "/atlas.atlas";
 
-		manager = new AssetManager();
-		manager.load(atlasPath, TextureAtlas.class);
+		if (config.shouldGenerateFontData()) {
+			createFontPng(config);
+		}
 
-		setupFonts();
+		if (config.shouldGenerateSpriteMap()) {
+			try {
+				createSpriteSheet(config, 2048);
+				createSpriteSheet(config, 4096);
+			} catch (RuntimeException e) {
+				throw new IllegalArgumentException("Exception packing images into spritesheet, ensure the following:\n\n1) You have an img\\ folder in the root" +
+						" of your android project.\n\n2) You are running the desktop app with a working directory set to projectRoot\\android\\assets\\.", e);
+			}
+		}
+
+        atlasPath = config.getAssetImgOutputPath() + "/" + size + "/atlas.atlas";
+
+        manager = new AssetManager();
+        manager.load(atlasPath, TextureAtlas.class);
+        loadMusic(Lists.newArrayList());
+        loadSound(Lists.newArrayList());
+        manager.finishLoading();
 	}
 
 	public void loadMusic(List<BeelineAssetPath> paths) {
@@ -46,7 +71,6 @@ public abstract class BeelineAssetManager {
 		for (BeelineAssetPath music : paths) {
 			manager.load(music.getAssetPath(), clazz);
 		}
-		manager.finishLoading();
 	}
 
 	public void dispose() {
@@ -79,19 +103,16 @@ public abstract class BeelineAssetManager {
 		return preferences;
 	}
 
-	protected void setupFonts() {
-	}
-
 	private AssetManager getManager() {
 		return manager;
 	}
 
 	public Sprite createSprite(BeelineAssetPath path) {
-		return getManager().get(path.getAssetPath(), TextureAtlas.class).createSprite(path.getAssetPath());
+		return getManager().get(getAtlasPath(), TextureAtlas.class).createSprite(path.getAssetPath());
 	}
 
 	public AtlasRegion getRegion(BeelineAssetPath path) {
-		return getManager().get(path.getAssetPath(), TextureAtlas.class).findRegion(path.getAssetPath());
+		return getManager().get(getAtlasPath(), TextureAtlas.class).findRegion(path.getAssetPath());
 	}
 
 	public static boolean isColorDark(Color color) {
@@ -101,6 +122,52 @@ public abstract class BeelineAssetManager {
 		} else {
 			return true; // It's a dark color
 		}
+	}
+
+	private void createSpriteSheet(BeelineToolingConfig config, int size) {
+		TexturePacker.Settings settings = new TexturePacker.Settings();
+		settings.maxWidth = size;
+		settings.maxHeight = size;
+		settings.fast = false;
+		settings.useIndexes = false;
+		settings.combineSubdirectories = true;
+		TexturePacker.process(
+				settings,
+				config.getAssetImgSourcePath(),
+				config.getAssetImgOutputPath() + "/" + size + "/", "atlas");
+	}
+
+    private void createFontPng(BeelineToolingConfig config) {
+		BitmapFontWriter.FontInfo info = new BitmapFontWriter.FontInfo();
+		info.padding = new BitmapFontWriter.Padding(1, 1, 1, 1);
+
+		FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
+		param.size = 49;
+		param.gamma = 1f;
+		param.renderCount = 199;
+		param.characters = Hiero.EXTENDED_CHARS;
+		param.mono = true;
+		param.packer = new PixmapPacker(512, 512, Pixmap.Format.RGBA8888, 2, false,
+		new PixmapPacker.SkylineStrategy());
+
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.local(config.getFontFileSourcePath()));
+		FreeTypeFontGenerator.FreeTypeBitmapFontData data = generator.generateData(param);
+
+		String fontFilePath = "/fonts/font";
+		BitmapFontWriter.writePixmaps(
+        		param.packer.getPages(),
+				Gdx.files.local(config.getAssetImgSourcePath()),
+				fontFilePath);
+        BitmapFontWriter.writeFont(
+		 		data,
+				new String[] { config.getAssetImgSourcePath() + fontFilePath + ".png" },
+                Gdx.files.local(config.getFontDataFileOutputPath() + "/font"),
+                info,
+                512, 512);
+	}
+
+	private String getAtlasPath() {
+		return atlasPath;
 	}
 
 }

@@ -1,20 +1,27 @@
 apply plugin: 'java'
 apply plugin: 'maven'
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-    jcenter()
-}
+//buildTypes {
+    def gdxVersion = '1.9.6'
 
-def gdxVersion = '1.9.6'
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        jcenter()
+    }
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    dependencies {
+        //compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-    compile group: 'com.google.guava', name: 'guava', version: '19.0'
+        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+        compile group: 'com.google.guava', name: 'guava', version: '19.0'
 
-    testCompile "junit:junit:4.12"
-}
+        testCompile "junit:junit:4.12"
+        testCompile "org.mockito:mockito-core:1.+"
+        testCompile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+        testCompile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+        testCompile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    }
+//}
