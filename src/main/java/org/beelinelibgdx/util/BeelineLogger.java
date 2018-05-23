@@ -13,7 +13,7 @@ public class BeelineLogger {
 	}
 
 	public static void log(Object object, String message) {
-		log(object.getClass().getName(), message);
+		log(object.getClass().getSimpleName(), message);
 	}
 
 }

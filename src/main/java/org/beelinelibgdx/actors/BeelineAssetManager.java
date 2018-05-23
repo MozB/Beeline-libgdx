@@ -8,11 +8,16 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.PixmapPacker;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.tools.bmfont.BitmapFontWriter;
 import com.badlogic.gdx.tools.hiero.Hiero;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
@@ -24,11 +29,16 @@ import java.util.List;
 
 public class BeelineAssetManager {
 
-	private final String atlasPath;
+    private static final String FONT_FILE_PATH = "fonts/font";
+    private final String atlasPath;
 	private AssetManager manager;
 	private Preferences preferences;
+    private BitmapFont font;
+    private BeelineToolingConfig config;
 
-	public BeelineAssetManager(BeelineToolingConfig config) {
+    public BeelineAssetManager(BeelineToolingConfig config) {
+        this.config = config;
+
 		int size;
 		if (GL20.GL_MAX_TEXTURE_SIZE == 2048) {
 			size = 2048;
@@ -40,7 +50,7 @@ public class BeelineAssetManager {
 			createFontPng(config);
 		}
 
-		if (config.shouldGenerateSpriteMap()) {
+		if (config.shouldGenerateSpritesheet()) {
 			try {
 				createSpriteSheet(config, 2048);
 				createSpriteSheet(config, 4096);
@@ -50,7 +60,7 @@ public class BeelineAssetManager {
 			}
 		}
 
-        atlasPath = config.getAssetImgOutputPath() + "/" + size + "/atlas.atlas";
+        atlasPath = config.getImgOutputDirectoryPath() + "/" + size + "/atlas.atlas";
 
         manager = new AssetManager();
         manager.load(atlasPath, TextureAtlas.class);
@@ -133,8 +143,8 @@ public class BeelineAssetManager {
 		settings.combineSubdirectories = true;
 		TexturePacker.process(
 				settings,
-				config.getAssetImgSourcePath(),
-				config.getAssetImgOutputPath() + "/" + size + "/", "atlas");
+				config.getImgSourceDirectoryPath(),
+				config.getImgOutputDirectoryPath() + "/" + size + "/", "atlas");
 	}
 
     private void createFontPng(BeelineToolingConfig config) {
@@ -150,24 +160,111 @@ public class BeelineAssetManager {
 		param.packer = new PixmapPacker(512, 512, Pixmap.Format.RGBA8888, 2, false,
 		new PixmapPacker.SkylineStrategy());
 
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.local(config.getFontFileSourcePath()));
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.local(config.getFontSourceFilePath()));
 		FreeTypeFontGenerator.FreeTypeBitmapFontData data = generator.generateData(param);
 
-		String fontFilePath = "/fonts/font";
 		BitmapFontWriter.writePixmaps(
         		param.packer.getPages(),
-				Gdx.files.local(config.getAssetImgSourcePath()),
-				fontFilePath);
+				Gdx.files.local(config.getImgSourceDirectoryPath()),
+				FONT_FILE_PATH);
         BitmapFontWriter.writeFont(
 		 		data,
-				new String[] { config.getAssetImgSourcePath() + fontFilePath + ".png" },
-                Gdx.files.local(config.getFontDataFileOutputPath() + "/font"),
+				new String[] { config.getImgSourceDirectoryPath() + FONT_FILE_PATH + ".png" },
+                Gdx.files.local(getFontSpriteFilePath()),
                 info,
                 512, 512);
 	}
 
+    private String getFontSpriteFilePath() {
+        return config.getFontDataOutputFilePath() + "/font";
+    }
+
+    public BitmapFont getFont() {
+        if (font == null) {
+            Sprite fontSprite = createSprite(() -> FONT_FILE_PATH);
+            font = new BitmapFont(Gdx.files.internal(getFontSpriteFilePath()), fontSprite);
+            // font.getData().setScale(1);
+            font.getData().setLineHeight(50);
+            for (BitmapFont.Glyph[] glyphArray : font.getData().glyphs) {
+                if (glyphArray != null) {
+                    for (BitmapFont.Glyph glyph : glyphArray) {
+                        if (glyph != null) {
+                            glyph.xadvance -= 4;
+                        }
+                    }
+                }
+            }
+        }
+        return font;
+    }
+
 	private String getAtlasPath() {
 		return atlasPath;
 	}
+	
+    public TextButton.TextButtonStyle getActorStyle(BeelineAssetPath path) {
+        return getActorStyle(path, path, path, path, null, null, null, null, Color.WHITE, Color.WHITE,
+                Color.WHITE, 0, 0, 0, 0);
+    }
+
+    public TextButton.TextButtonStyle getActorStyle(BeelineAssetPath path, int border) {
+        return getActorStyle(path, path, path, path, null, null, null, null, Color.WHITE, Color.WHITE,
+                Color.WHITE, border, border, border, border);
+    }
+
+    public TextButton.TextButtonStyle getActorStyle(BeelineAssetPath path, int left, int right, int top, int bottom) {
+        return getActorStyle(path, path, path, path, null, null, null, null, Color.WHITE, Color.WHITE,
+                Color.WHITE, left, right, top, bottom);
+    }
+
+    private TextButton.TextButtonStyle getActorStyle(BeelineAssetPath upTexture, BeelineAssetPath downTexture, BeelineAssetPath disabledTexture,
+													 BeelineAssetPath checkedTexture, Color upColor, Color downColor, Color disabledColor, Color checkedColor,
+													 Color fontColor, Color checkedFontColor, Color disabledFontColor, int left, int right, int top,
+													 int bottom) {
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = getFont();
+        {
+            NinePatch ninePatch = getNinePatch(upTexture, left, right, top, bottom);
+            if (upColor != null) {
+                ninePatch.setColor(upColor);
+            }
+            textButtonStyle.up = getNinePatchDrawable(ninePatch);
+        }
+        {
+            NinePatch ninePatch = getNinePatch(downTexture, left, right, top, bottom);
+            if (downColor != null) {
+                ninePatch.setColor(downColor);
+            }
+            textButtonStyle.down = getNinePatchDrawable(ninePatch);
+        }
+        {
+            NinePatch ninePatch = getNinePatch(disabledTexture, left, right, top, bottom);
+            if (disabledColor != null) {
+                ninePatch.setColor(disabledColor);
+            }
+            textButtonStyle.disabled = getNinePatchDrawable(ninePatch);
+        }
+        {
+            NinePatch ninePatch = getNinePatch(checkedTexture, left, right, top, bottom);
+            if (checkedColor != null) {
+                ninePatch.setColor(checkedColor);
+            }
+            textButtonStyle.checked = getNinePatchDrawable(ninePatch);
+            textButtonStyle.checkedFontColor = checkedFontColor;
+        }
+        textButtonStyle.fontColor = fontColor;
+        textButtonStyle.disabledFontColor = disabledFontColor;
+        return textButtonStyle;
+    }
+
+    private NinePatch getNinePatch(BeelineAssetPath te, int left, int right, int top, int bottom) {
+        TextureRegion tex = getManager().get(getAtlasPath(), TextureAtlas.class).findRegion(te.getAssetPath());
+        return new NinePatch(tex, left, right, top, bottom);
+    }
+
+    private NinePatchDrawable getNinePatchDrawable(NinePatch t) {
+        NinePatchDrawable d = new NinePatchDrawable(t);
+        return d;
+    }
 
 }

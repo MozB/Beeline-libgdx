@@ -1,0 +1,46 @@
+package org.beelinelibgdx.actors;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+
+public class BeelineActor extends TextButton implements BeelineRefreshable {
+
+    public BeelineActor(TextButtonStyle style, float width, float height) {
+        this(style, width, height, "");
+    }
+
+    public BeelineActor(TextButtonStyle style, float width, float height, String title) {
+        super(title, style);
+
+        addListener(new InputListener() {
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                Gdx.app.log(this.getClass().getName(),
+                        getText().toString() + " touchUp()" + (isChecked() ? " checked" : ""));
+                onTouchUp();
+            }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                Gdx.app.log(this.getClass().getName(),
+                        getText().toString() + " touchDown()" + (isChecked() ? " checked" : ""));
+                return true;
+            }
+        });
+
+        setWidth(width);
+        setHeight(height);
+    }
+
+    @Override
+    public void refresh() {
+
+    }
+
+    public void onTouchUp() {
+
+    }
+}
+

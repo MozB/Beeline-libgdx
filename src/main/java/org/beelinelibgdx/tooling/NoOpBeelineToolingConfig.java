@@ -1,29 +1,39 @@
 package org.beelinelibgdx.tooling;
 
-class NoOpBeelineToolingConfig {
+class NoOpBeelineToolingConfig implements BeelineToolingConfig {
 
-    public boolean shouldGenereateFont() {
+    @Override
+    public boolean shouldGenerateFontData() {
         return false;
     }
 
-    public boolean shouldGenerateSpriteMap() {
+    @Override
+    public boolean shouldGenerateSpritesheet() {
         return false;
     }
 
-    public String getAssetImgSourcePath() {
+    @Override
+    public String getImgSourceDirectoryPath() {
         return null;
     }
 
-    public String getAssetImgOutputPath() {
+    @Override
+    public String getImgOutputDirectoryPath() {
         return null;
     }
 
-    public String getFontFileSourcePath() {
+    @Override
+    public String getFontSourceFilePath() {
         return null;
     }
 
-    public String getFontDataFileOutputPath() {
+    @Override
+    public String getFontDataOutputFilePath() {
         return null;
     }
 
+    @Override
+    public String getSaveGameDirectoryPath() {
+        return null;
+    }
 }

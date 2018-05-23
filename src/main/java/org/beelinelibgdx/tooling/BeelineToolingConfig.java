@@ -4,14 +4,16 @@ public interface BeelineToolingConfig {
 
     boolean shouldGenerateFontData();
 
-    boolean shouldGenerateSpriteMap();
+    boolean shouldGenerateSpritesheet();
 
-    String getAssetImgSourcePath();
+    String getImgSourceDirectoryPath();
 
-    String getAssetImgOutputPath();
+    String getImgOutputDirectoryPath();
 
-    String getFontFileSourcePath();
+    String getFontSourceFilePath();
 
-    String getFontDataFileOutputPath();
+    String getFontDataOutputFilePath();
+
+    String getSaveGameDirectoryPath();
 
 }
