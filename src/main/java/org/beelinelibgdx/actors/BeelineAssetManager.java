@@ -23,6 +23,7 @@ import com.badlogic.gdx.tools.hiero.Hiero;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.google.common.collect.Lists;
 
+import org.beelinelibgdx.exception.BeelineMissingAssetRuntimeException;
 import org.beelinelibgdx.tooling.BeelineToolingConfig;
 
 import java.util.List;
@@ -118,7 +119,11 @@ public class BeelineAssetManager {
 	}
 
 	public Sprite createSprite(BeelineAssetPath path) {
-		return getManager().get(getAtlasPath(), TextureAtlas.class).createSprite(path.getAssetPath());
+        Sprite sprite = getManager().get(getAtlasPath(), TextureAtlas.class).createSprite(path.getAssetPath());
+        if (sprite == null) {
+            throw new BeelineMissingAssetRuntimeException(path.getAssetPath(), getManager());
+        }
+        return sprite;
 	}
 
 	public AtlasRegion getRegion(BeelineAssetPath path) {

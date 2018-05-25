@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.beelinelibgdx.actors.BeelineAssetManager;
+import org.beelinelibgdx.exception.BeelineRuntimeException;
 import org.beelinelibgdx.tooling.BeelineToolingConfig;
 import org.beelinelibgdx.util.BeelineLogger;
 

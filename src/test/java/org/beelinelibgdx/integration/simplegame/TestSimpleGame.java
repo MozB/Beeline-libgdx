@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import org.beelinelibgdx.BeelineGame;
 import org.beelinelibgdx.actors.BeelineActor;
 import org.beelinelibgdx.actors.BeelineAssetPath;
+import org.beelinelibgdx.exception.BeelineMissingAssetRuntimeException;
 import org.beelinelibgdx.integration.GameTest;
 import org.beelinelibgdx.tooling.BeelineToolingConfig;
 import org.junit.Assert;
@@ -19,15 +20,14 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.junit.Assert.fail;
+
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( { Stage.class })
 public class TestSimpleGame extends GameTest {
 
     @Test
     public void testSimpleGame() throws Exception {
-
-        SpriteBatch spriteBatch = Mockito.mock(SpriteBatch.class);
-        PowerMockito.whenNew(SpriteBatch.class).withAnyArguments().thenReturn(spriteBatch);
 
         /**Setup**/
         BeelineGame game = new SimpleGame(200, 200);
@@ -62,9 +62,34 @@ public class TestSimpleGame extends GameTest {
         Assert.assertEquals("Button was created", "Hello world!", actor.getText().toString());
 
         /**Add actor to a test screen**/
+        SpriteBatch spriteBatch = Mockito.mock(SpriteBatch.class);
+        PowerMockito.whenNew(SpriteBatch.class).withAnyArguments().thenReturn(spriteBatch);
+
         SimpleScreen screen = new SimpleScreen(game.getViewport(), actor);
         game.setScreen(screen);
 
+    }
+
+    @Test
+    public void testSimpleMissingAsset() throws Exception {
+
+        /**Setup**/
+        BeelineGame game = new SimpleGame(200, 200);
+        game.create();
+
+        /**Test sprites can be created from the generated spritesheet**/
+        BeelineAssetPath squarePath = new BeelineAssetPath() {
+            @Override
+            public String getAssetPath() {
+                return "square2"; //does not exist
+            }
+        };
+        try {
+            Sprite sprite = game.getAssetManager().createSprite(squarePath);
+            fail();
+        } catch (BeelineMissingAssetRuntimeException e) {
+            e.printStackTrace();
+        }
     }
 
     @Before

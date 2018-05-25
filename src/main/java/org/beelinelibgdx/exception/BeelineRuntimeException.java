@@ -1,4 +1,4 @@
-package org.beelinelibgdx;
+package org.beelinelibgdx.exception;
 
 public class BeelineRuntimeException extends RuntimeException {
 

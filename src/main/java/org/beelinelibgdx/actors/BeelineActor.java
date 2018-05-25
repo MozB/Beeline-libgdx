@@ -11,8 +11,8 @@ public class BeelineActor extends TextButton implements BeelineRefreshable {
         this(style, width, height, "");
     }
 
-    public BeelineActor(TextButtonStyle style, float width, float height, String title) {
-        super(title, style);
+    public BeelineActor(TextButtonStyle style, float width, float height, String label) {
+        super(label, style);
 
         addListener(new InputListener() {
             @Override
