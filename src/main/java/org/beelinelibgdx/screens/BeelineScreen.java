@@ -1,6 +1,7 @@
 package org.beelinelibgdx.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.FPSLogger;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import org.beelinelibgdx.actors.BeelineRefreshable;
+import org.beelinelibgdx.actors.BeelineRemovable;
 
 public abstract class BeelineScreen extends Stage implements Screen, InputProcessor, BeelineRefreshable {
 
@@ -24,7 +26,7 @@ public abstract class BeelineScreen extends Stage implements Screen, InputProces
         GLProfiler.enable();
     }
 
-    public abstract BeelineRefreshable getScreenContent();
+    public abstract BeelineRemovable getScreenContent();
 
     @Override
     public void show() {
@@ -48,7 +50,16 @@ public abstract class BeelineScreen extends Stage implements Screen, InputProces
         }
     }
 
-    public void onBackNoPreviousScreen() {
+    @Override
+    public boolean keyUp(int keyCode) {
+        if (keyCode == Input.Keys.BACK || keyCode == Input.Keys.BACKSPACE) {
+            onBack();
+            return true;
+        }
+        return false;
+    }
+
+    public void onBack() {
 
     }
 

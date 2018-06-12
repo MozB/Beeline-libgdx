@@ -27,29 +27,20 @@ public abstract class BeelineGame<G extends Serializable> extends Game {
 	private StretchViewport viewport;
 	private static int width;
 	private static int height;
-	private BeelineToolingConfig config;
 	@SuppressWarnings("unused")
 	private FPSLogger fpsLogger = new FPSLogger();
 
 	@SuppressWarnings("static-access")
-	public BeelineGame(int width, int height) {
+	public BeelineGame(int width, int height, BeelineAssetManager assets) {
 		this.width = width;
 		this.height = height;
-	}
-
-	protected void setBeelineToolingConfig(BeelineToolingConfig config) {
-		this.config = config;
+		this.assets = assets;
 	}
 
 	@Override
 	public void create() {
 		BeelineLogger.log(this.getClass().getSimpleName(), "Creating game");
-
-		if (config != null) {
-			assets = new BeelineAssetManager(config);
-		} else {
-			throw new BeelineRuntimeException("You must set up BeelineToolingConfig before creating your game.");
-		}
+		assets.load();
 
 		OrthographicCamera camera = new OrthographicCamera();
 		viewport = new StretchViewport(getWidth(), getHeight(), camera);
@@ -62,7 +53,7 @@ public abstract class BeelineGame<G extends Serializable> extends Game {
 	public Object loadObject(String name) throws IOException, ClassNotFoundException {
 		// unit testing
 		if (Gdx.files != null) {
-			FileHandle file = Gdx.files.local(config.getSaveGameDirectoryPath() + "/" + name);
+			FileHandle file = Gdx.files.local( assets.getConfig().getSaveGameDirectoryPath() + "/" + name);
 			if (file.exists()) {
 				byte[] bytes = file.readBytes();
 				ByteArrayInputStream in = new ByteArrayInputStream(bytes);
@@ -94,7 +85,7 @@ public abstract class BeelineGame<G extends Serializable> extends Game {
 			Gdx.app.log("SAVE", "End to byte array");
 
 			Gdx.app.log("SAVE", "Start write bytes");
-			FileHandle file = Gdx.files.local(config.getSaveGameDirectoryPath() + "/" + name);
+			FileHandle file = Gdx.files.local(assets.getConfig().getSaveGameDirectoryPath() + "/" + name);
 			file.writeBytes(array, false);
 			Gdx.app.log("SAVE", "End write bytes");
 

@@ -16,6 +16,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.tools.bmfont.BitmapFontWriter;
@@ -31,7 +33,8 @@ import java.util.List;
 public class BeelineAssetManager {
 
     private static final String FONT_FILE_PATH = "fonts/font";
-    private final String atlasPath;
+    private String atlasPath;
+	private Skin skin;
 	private AssetManager manager;
 	private Preferences preferences;
     private BitmapFont font;
@@ -39,7 +42,9 @@ public class BeelineAssetManager {
 
     public BeelineAssetManager(BeelineToolingConfig config) {
         this.config = config;
+	}
 
+	public void load() {
 		int size;
 		if (GL20.GL_MAX_TEXTURE_SIZE == 2048) {
 			size = 2048;
@@ -56,18 +61,25 @@ public class BeelineAssetManager {
 				createSpriteSheet(config, 2048);
 				createSpriteSheet(config, 4096);
 			} catch (RuntimeException e) {
-				throw new IllegalArgumentException("Exception packing images into spritesheet, ensure the following:\n\n1) You have an img\\ folder in the root" +
+				throw new IllegalArgumentException("Exception packing images into sprite sheet, ensure the following:\n\n1) You have an img\\ folder in the root" +
 						" of your android project.\n\n2) You are running the desktop app with a working directory set to projectRoot\\android\\assets\\.", e);
 			}
 		}
 
-        atlasPath = config.getImgOutputDirectoryPath() + "/" + size + "/atlas.atlas";
+		atlasPath = config.getImgOutputDirectoryPath() + "/" + size + "/atlas.atlas";
 
-        manager = new AssetManager();
-        manager.load(atlasPath, TextureAtlas.class);
-        loadMusic(Lists.newArrayList());
-        loadSound(Lists.newArrayList());
-        manager.finishLoading();
+		manager = new AssetManager();
+		manager.load(atlasPath, TextureAtlas.class);
+		loadMusic(Lists.newArrayList());
+		loadSound(Lists.newArrayList());
+		manager.finishLoading();
+
+		skin = new Skin();
+		skin.add("default", getFont(), BitmapFont.class);
+
+		Label.LabelStyle labelStyle = new Label.LabelStyle();
+		labelStyle.font = getFont();
+		skin.add("default", labelStyle, Label.LabelStyle.class);
 	}
 
 	public void loadMusic(List<BeelineAssetPath> paths) {
@@ -222,7 +234,7 @@ public class BeelineAssetManager {
                 Color.WHITE, left, right, top, bottom);
     }
 
-    private TextButton.TextButtonStyle getActorStyle(BeelineAssetPath upTexture, BeelineAssetPath downTexture, BeelineAssetPath disabledTexture,
+    protected TextButton.TextButtonStyle getActorStyle(BeelineAssetPath upTexture, BeelineAssetPath downTexture, BeelineAssetPath disabledTexture,
 													 BeelineAssetPath checkedTexture, Color upColor, Color downColor, Color disabledColor, Color checkedColor,
 													 Color fontColor, Color checkedFontColor, Color disabledFontColor, int left, int right, int top,
 													 int bottom) {
@@ -272,4 +284,12 @@ public class BeelineAssetManager {
         return d;
     }
 
+
+	public Skin getSkin() {
+		return skin;
+	}
+
+	public BeelineToolingConfig getConfig() {
+		return config;
+	}
 }

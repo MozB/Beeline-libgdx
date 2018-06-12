@@ -12,8 +12,6 @@ apply plugin: 'maven'
     }
 
     dependencies {
-        //compile fileTree(dir: 'libs', include: ['*.jar'])
-
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
         compile group: 'com.google.guava', name: 'guava', version: '19.0'
