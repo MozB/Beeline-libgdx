@@ -21,8 +21,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.tools.bmfont.BitmapFontWriter;
-import com.badlogic.gdx.tools.hiero.Hiero;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.google.common.collect.Lists;
 
 import org.beelinelibgdx.exception.BeelineMissingAssetRuntimeException;
@@ -72,7 +72,11 @@ public class BeelineAssetManager {
 		manager.load(atlasPath, TextureAtlas.class);
 		loadMusic(Lists.newArrayList());
 		loadSound(Lists.newArrayList());
-		manager.finishLoading();
+		try {
+			manager.finishLoading();
+		} catch (GdxRuntimeException e) {
+			throw new IllegalStateException("Could not load assets, is the working directory for the desktop application set to android/assets?", e);
+		}
 
 		skin = new Skin();
 		skin.add("default", getFont(), BitmapFont.class);
@@ -169,12 +173,12 @@ public class BeelineAssetManager {
 		info.padding = new BitmapFontWriter.Padding(1, 1, 1, 1);
 
 		FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
-		param.size = 49;
+		param.size = 60;
 		param.gamma = 1f;
 		param.renderCount = 199;
-		param.characters = Hiero.EXTENDED_CHARS;
-		param.mono = true;
-		param.packer = new PixmapPacker(512, 512, Pixmap.Format.RGBA8888, 2, false,
+//		param.characters = Hiero.EXTENDED_CHARS;
+		param.mono = false;
+		param.packer = new PixmapPacker(1024, 1024, Pixmap.Format.RGBA8888, 2, false,
 		new PixmapPacker.SkylineStrategy());
 
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.local(config.getFontSourceFilePath()));
@@ -201,7 +205,8 @@ public class BeelineAssetManager {
             Sprite fontSprite = createSprite(() -> FONT_FILE_PATH);
             font = new BitmapFont(Gdx.files.internal(getFontSpriteFilePath()), fontSprite);
             // font.getData().setScale(1);
-            font.getData().setLineHeight(50);
+            font.getData().setLineHeight(60);
+            font.getData().setScale(1f);
             for (BitmapFont.Glyph[] glyphArray : font.getData().glyphs) {
                 if (glyphArray != null) {
                     for (BitmapFont.Glyph glyph : glyphArray) {

@@ -26,6 +26,7 @@ public class BeelineActor extends TextButton implements BeelineRefreshable {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 Gdx.app.log(this.getClass().getName(),
                         getText().toString() + " touchDown()" + (isChecked() ? " checked" : ""));
+                onTouchDown();
                 return true;
             }
         });
@@ -40,6 +41,10 @@ public class BeelineActor extends TextButton implements BeelineRefreshable {
     }
 
     public void onTouchUp() {
+
+    }
+
+    public void onTouchDown() {
 
     }
 }
