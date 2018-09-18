@@ -39,6 +39,11 @@ public class BeelineRotatableActor extends Actor {
         return sprite;
     }
 
+    public void size(int scale) {
+        setWidth(getWidth() * scale);
+        setHeight(getHeight() * scale);
+    }
+
     // @Override
     // public Color getColor() {
     // return sprite.getColor();

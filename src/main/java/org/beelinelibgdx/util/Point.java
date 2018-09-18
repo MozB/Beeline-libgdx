@@ -1,9 +1,13 @@
 package org.beelinelibgdx.util;
 
-public class Point {
+import java.io.Serializable;
 
-    public final float x;
-    public final float y;
+public class Point implements Serializable {
+
+    private static final long serialVersionUID = 1l;
+
+    public float x;
+    public float y;
 
     public Point(float x, float y) {
         this.x = x;

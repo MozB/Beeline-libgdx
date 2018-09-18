@@ -12,13 +12,13 @@ import java.io.Serializable;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.beelinelibgdx.actors.BeelineAssetManager;
-import org.beelinelibgdx.exception.BeelineRuntimeException;
-import org.beelinelibgdx.tooling.BeelineToolingConfig;
+import org.beelinelibgdx.exception.BeelineLoadFailureException;
 import org.beelinelibgdx.util.BeelineLogger;
 
 public abstract class BeelineGame<G extends Serializable> extends Game {
@@ -29,6 +29,7 @@ public abstract class BeelineGame<G extends Serializable> extends Game {
 	private static int height;
 	@SuppressWarnings("unused")
 	private FPSLogger fpsLogger = new FPSLogger();
+	private OrthographicCamera camera;
 
 	@SuppressWarnings("static-access")
 	public BeelineGame(int width, int height, BeelineAssetManager assets) {
@@ -42,15 +43,23 @@ public abstract class BeelineGame<G extends Serializable> extends Game {
 		BeelineLogger.log(this.getClass().getSimpleName(), "Creating game");
 		assets.load();
 
-		OrthographicCamera camera = new OrthographicCamera();
+		camera = createCamera();
 		viewport = new StretchViewport(getWidth(), getHeight(), camera);
 	}
 
-	public G loadGame(String name) throws IOException, ClassNotFoundException {
+	public OrthographicCamera getCamera() {
+		return camera;
+	}
+
+	protected OrthographicCamera createCamera() {
+		return new OrthographicCamera();
+	}
+
+	public G loadGame(String name) throws IOException, ClassNotFoundException, BeelineLoadFailureException {
 		return (G)loadObject(name);
 	}
 
-	public Object loadObject(String name) throws IOException, ClassNotFoundException {
+	public Object loadObject(String name) throws IOException, ClassNotFoundException, BeelineLoadFailureException {
 		// unit testing
 		if (Gdx.files != null) {
 			FileHandle file = Gdx.files.local( assets.getConfig().getSaveGameDirectoryPath() + "/" + name);
@@ -64,10 +73,14 @@ public abstract class BeelineGame<G extends Serializable> extends Game {
 				return is.readObject();
 			}
 		}
-		return null;
+		throw new BeelineLoadFailureException(name);
 	}
 
 	public void saveGame(G saveObject, String name) {
+		saveObject(saveObject, name);
+	}
+
+	public void saveObject(Object saveObject, String name) {
 		try {
 			Gdx.app.log("SAVE", "Start write object");
 

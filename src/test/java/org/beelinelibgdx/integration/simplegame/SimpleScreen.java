@@ -16,7 +16,7 @@ class SimpleScreen extends BeelineScreen {
     }
 
     @Override
-    public BeelineRefreshable getScreenContent() {
+    public BeelineRefreshable getScreenContentAsRemoveable() {
         return actor;
     }
 

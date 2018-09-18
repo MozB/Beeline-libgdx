@@ -70,8 +70,8 @@ public class BeelineAssetManager {
 
 		manager = new AssetManager();
 		manager.load(atlasPath, TextureAtlas.class);
-		loadMusic(Lists.newArrayList());
-		loadSound(Lists.newArrayList());
+		loadMusic(getMusics());
+		loadSound(getSounds());
 		try {
 			manager.finishLoading();
 		} catch (GdxRuntimeException e) {
@@ -86,8 +86,16 @@ public class BeelineAssetManager {
 		skin.add("default", labelStyle, Label.LabelStyle.class);
 	}
 
+	protected List<BeelineAssetPath> getMusics() {
+		return Lists.newArrayList();
+	}
+
+	protected List<BeelineAssetPath> getSounds() {
+		return Lists.newArrayList();
+	}
+
 	public void loadMusic(List<BeelineAssetPath> paths) {
-		loadAsset(paths, Music.class);
+    	loadAsset(paths, Music.class);
 	}
 
 	public void loadSound(List<BeelineAssetPath> paths) {
@@ -95,8 +103,8 @@ public class BeelineAssetManager {
 	}
 
 	private void loadAsset(List<BeelineAssetPath> paths, Class clazz) {
-		for (BeelineAssetPath music : paths) {
-			manager.load(music.getAssetPath(), clazz);
+		for (BeelineAssetPath path : paths) {
+			manager.load(path.getAssetPath(), clazz);
 		}
 	}
 
@@ -130,15 +138,20 @@ public class BeelineAssetManager {
 		return preferences;
 	}
 
-	private AssetManager getManager() {
+	protected AssetManager getManager() {
 		return manager;
 	}
 
 	public Sprite createSprite(BeelineAssetPath path) {
+		return createSprite(path, 1);
+	}
+
+	protected Sprite createSprite(BeelineAssetPath path, int scale) {
         Sprite sprite = getManager().get(getAtlasPath(), TextureAtlas.class).createSprite(path.getAssetPath());
         if (sprite == null) {
             throw new BeelineMissingAssetRuntimeException(path.getAssetPath(), getManager());
         }
+        sprite.scale(scale);
         return sprite;
 	}
 
@@ -279,12 +292,12 @@ public class BeelineAssetManager {
         return textButtonStyle;
     }
 
-    private NinePatch getNinePatch(BeelineAssetPath te, int left, int right, int top, int bottom) {
+    protected NinePatch getNinePatch(BeelineAssetPath te, int left, int right, int top, int bottom) {
         TextureRegion tex = getManager().get(getAtlasPath(), TextureAtlas.class).findRegion(te.getAssetPath());
         return new NinePatch(tex, left, right, top, bottom);
     }
 
-    private NinePatchDrawable getNinePatchDrawable(NinePatch t) {
+    protected NinePatchDrawable getNinePatchDrawable(NinePatch t) {
         NinePatchDrawable d = new NinePatchDrawable(t);
         return d;
     }

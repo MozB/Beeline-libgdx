@@ -18,7 +18,7 @@ public abstract class BeelineScreen extends Stage implements Screen, InputProces
 
     private FPSLogger log;
     private boolean firstRender = true;
-    private int lastFrameRenderCalls;
+    protected int lastFrameRenderCalls;
 
     public BeelineScreen(Viewport v) {
         super(v);
@@ -26,7 +26,7 @@ public abstract class BeelineScreen extends Stage implements Screen, InputProces
         GLProfiler.enable();
     }
 
-    public abstract BeelineRemovable getScreenContent();
+    public abstract BeelineRemovable getScreenContentAsRemoveable();
 
     @Override
     public void show() {
