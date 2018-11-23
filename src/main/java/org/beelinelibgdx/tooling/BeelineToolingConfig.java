@@ -4,7 +4,7 @@ public interface BeelineToolingConfig {
 
     boolean shouldGenerateFontData();
 
-    boolean shouldGenerateSpritesheet();
+    boolean shouldGenerateSpriteSheet();
 
     String getImgSourceDirectoryPath();
 

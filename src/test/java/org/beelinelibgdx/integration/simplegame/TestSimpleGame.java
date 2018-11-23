@@ -108,7 +108,7 @@ public class TestSimpleGame extends GameTest {
                 }
 
                 @Override
-                public boolean shouldGenerateSpritesheet() {
+                public boolean shouldGenerateSpriteSheet() {
                     return true;
                 }
 

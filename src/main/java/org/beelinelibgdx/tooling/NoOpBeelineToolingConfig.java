@@ -8,7 +8,7 @@ class NoOpBeelineToolingConfig implements BeelineToolingConfig {
     }
 
     @Override
-    public boolean shouldGenerateSpritesheet() {
+    public boolean shouldGenerateSpriteSheet() {
         return false;
     }
 

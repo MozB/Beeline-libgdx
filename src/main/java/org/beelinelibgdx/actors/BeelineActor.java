@@ -35,16 +35,16 @@ public class BeelineActor extends TextButton implements BeelineRefreshable {
         setHeight(height);
     }
 
-    @Override
-    public void refresh() {
-
-    }
-
     public void onTouchUp() {
 
     }
 
     public void onTouchDown() {
+
+    }
+
+    @Override
+    public void refresh() {
 
     }
 }

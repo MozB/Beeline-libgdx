@@ -35,7 +35,7 @@ public abstract class ModelAndActorVisibilityContract<M extends VisibleModel, E 
                     break;
                 }
             }
-            if (!found) {
+            if (!found && !model.shouldRemoveFromScreen()) {
                 E visibleActor = createVisibleActor(model);
                 visibleActors.add(visibleActor);
                 parent.addActor((Actor) visibleActor);
@@ -57,7 +57,7 @@ public abstract class ModelAndActorVisibilityContract<M extends VisibleModel, E 
         for (E visibleActor : toRemove) {
             onDeleteEntity(visibleActor);
             visibleActors.remove(visibleActor);
-            parent.removeActor((Actor) visibleActor);
+            visibleActor.remove();
         }
     }
 

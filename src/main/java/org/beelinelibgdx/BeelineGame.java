@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.beelinelibgdx.actors.BeelineAssetManager;
 import org.beelinelibgdx.exception.BeelineLoadFailureException;
+import org.beelinelibgdx.exception.BeelineLoadFileNotFoundException;
 import org.beelinelibgdx.util.BeelineLogger;
 
 public abstract class BeelineGame<G extends Serializable> extends Game {
@@ -55,11 +56,11 @@ public abstract class BeelineGame<G extends Serializable> extends Game {
 		return new OrthographicCamera();
 	}
 
-	public G loadGame(String name) throws IOException, ClassNotFoundException, BeelineLoadFailureException {
+	public G loadGame(String name) throws IOException, ClassNotFoundException, BeelineLoadFailureException, BeelineLoadFileNotFoundException {
 		return (G)loadObject(name);
 	}
 
-	public Object loadObject(String name) throws IOException, ClassNotFoundException, BeelineLoadFailureException {
+	public Object loadObject(String name) throws IOException, ClassNotFoundException, BeelineLoadFailureException, BeelineLoadFileNotFoundException {
 		// unit testing
 		if (Gdx.files != null) {
 			FileHandle file = Gdx.files.local( assets.getConfig().getSaveGameDirectoryPath() + "/" + name);
@@ -71,6 +72,8 @@ public abstract class BeelineGame<G extends Serializable> extends Game {
 
 				is = new ObjectInputStream(bos);
 				return is.readObject();
+			} else {
+				throw new BeelineLoadFileNotFoundException(name);
 			}
 		}
 		throw new BeelineLoadFailureException(name);
@@ -82,7 +85,7 @@ public abstract class BeelineGame<G extends Serializable> extends Game {
 
 	public void saveObject(Object saveObject, String name) {
 		try {
-			Gdx.app.log("SAVE", "Start write object");
+			BeelineLogger.log("SAVE", "Start write object");
 
 			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 			BufferedOutputStream bufferedStream = new BufferedOutputStream(byteStream);
@@ -91,16 +94,16 @@ public abstract class BeelineGame<G extends Serializable> extends Game {
 			os.writeObject(saveObject);
 			os.flush();
 
-			Gdx.app.log("SAVE", "End write object");
+			BeelineLogger.log("SAVE", "End write object");
 
-			Gdx.app.log("SAVE", "Start to byte array");
+			BeelineLogger.log("SAVE", "Start to byte array");
 			byte[] array = byteStream.toByteArray();
-			Gdx.app.log("SAVE", "End to byte array");
+			BeelineLogger.log("SAVE", "End to byte array");
 
-			Gdx.app.log("SAVE", "Start write bytes");
+			BeelineLogger.log("SAVE", "Start write bytes");
 			FileHandle file = Gdx.files.local(assets.getConfig().getSaveGameDirectoryPath() + "/" + name);
 			file.writeBytes(array, false);
-			Gdx.app.log("SAVE", "End write bytes");
+			BeelineLogger.log("SAVE", "End write bytes");
 
 			os.reset();
 			bufferedStream.close();

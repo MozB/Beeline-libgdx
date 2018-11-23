@@ -44,7 +44,7 @@ public class BeelineAssetManager {
         this.config = config;
 	}
 
-	public void load() {
+	public final void load() {
 		int size;
 		if (GL20.GL_MAX_TEXTURE_SIZE == 2048) {
 			size = 2048;
@@ -56,7 +56,7 @@ public class BeelineAssetManager {
 			createFontPng(config);
 		}
 
-		if (config.shouldGenerateSpritesheet()) {
+		if (config.shouldGenerateSpriteSheet()) {
 			try {
 				createSpriteSheet(config, 2048);
 				createSpriteSheet(config, 4096);
@@ -84,6 +84,12 @@ public class BeelineAssetManager {
 		Label.LabelStyle labelStyle = new Label.LabelStyle();
 		labelStyle.font = getFont();
 		skin.add("default", labelStyle, Label.LabelStyle.class);
+
+		afterLoad();
+	}
+
+	protected void afterLoad() {
+
 	}
 
 	protected List<BeelineAssetPath> getMusics() {
@@ -99,7 +105,7 @@ public class BeelineAssetManager {
 	}
 
 	public void loadSound(List<BeelineAssetPath> paths) {
-		loadAsset(paths, Sound.class);
+    	loadAsset(paths, Sound.class);
 	}
 
 	private void loadAsset(List<BeelineAssetPath> paths, Class clazz) {
@@ -147,7 +153,7 @@ public class BeelineAssetManager {
 	}
 
 	protected Sprite createSprite(BeelineAssetPath path, int scale) {
-        Sprite sprite = getManager().get(getAtlasPath(), TextureAtlas.class).createSprite(path.getAssetPath());
+        Sprite sprite = getTextureAtlas().createSprite(path.getAssetPath());
         if (sprite == null) {
             throw new BeelineMissingAssetRuntimeException(path.getAssetPath(), getManager());
         }
@@ -156,7 +162,11 @@ public class BeelineAssetManager {
 	}
 
 	public AtlasRegion getRegion(BeelineAssetPath path) {
-		return getManager().get(getAtlasPath(), TextureAtlas.class).findRegion(path.getAssetPath());
+		return getTextureAtlas().findRegion(path.getAssetPath());
+	}
+
+	public TextureAtlas getTextureAtlas() {
+		return getManager().get(getAtlasPath(), TextureAtlas.class);
 	}
 
 	public static boolean isColorDark(Color color) {
@@ -293,12 +303,12 @@ public class BeelineAssetManager {
     }
 
     protected NinePatch getNinePatch(BeelineAssetPath te, int left, int right, int top, int bottom) {
-        TextureRegion tex = getManager().get(getAtlasPath(), TextureAtlas.class).findRegion(te.getAssetPath());
+        TextureRegion tex = getTextureAtlas().findRegion(te.getAssetPath());
         return new NinePatch(tex, left, right, top, bottom);
     }
 
     protected NinePatchDrawable getNinePatchDrawable(NinePatch t) {
-        NinePatchDrawable d = new NinePatchDrawable(t);
+		NinePatchDrawable d = new NinePatchDrawable(t);
         return d;
     }
 

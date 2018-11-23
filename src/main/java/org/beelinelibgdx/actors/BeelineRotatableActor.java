@@ -1,9 +1,12 @@
 package org.beelinelibgdx.actors;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 
 public class BeelineRotatableActor extends Actor {
 
@@ -19,6 +22,27 @@ public class BeelineRotatableActor extends Actor {
         this.sprite = sprite;
         setWidth(sprite.getWidth());
         setHeight(sprite.getHeight());
+
+        addListener(new InputListener() {
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                onTouchUp();
+            }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                onTouchDown();
+                return true;
+            }
+        });
+    }
+
+    public void onTouchUp() {
+
+    }
+
+    public void onTouchDown() {
+
     }
 
     @Override

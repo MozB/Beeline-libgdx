@@ -1,7 +1,5 @@
 package org.beelinelibgdx.actors;
 
-public interface VisibleActor {
-
-	abstract VisibleModel getModel();
-
+public interface VisibleActor extends ModelHolder<VisibleModel> {
+    boolean remove();
 }
