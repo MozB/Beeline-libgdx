@@ -12,12 +12,12 @@ import java.io.Serializable;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.beelinelibgdx.actors.BeelineAssetManager;
+import org.beelinelibgdx.exception.BeelineDeleteFailureException;
 import org.beelinelibgdx.exception.BeelineLoadFailureException;
 import org.beelinelibgdx.exception.BeelineLoadFileNotFoundException;
 import org.beelinelibgdx.util.BeelineLogger;
@@ -77,6 +77,19 @@ public abstract class BeelineGame<G extends Serializable> extends Game {
 			}
 		}
 		throw new BeelineLoadFailureException(name);
+	}
+
+	public boolean deleteObject(String name) throws BeelineLoadFileNotFoundException, BeelineDeleteFailureException {
+		// unit testing
+		if (Gdx.files != null) {
+			FileHandle file = Gdx.files.local( assets.getConfig().getSaveGameDirectoryPath() + "/" + name);
+			if (file.exists()) {
+				return file.delete();
+			} else {
+				throw new BeelineLoadFileNotFoundException(name);
+			}
+		}
+		throw new BeelineDeleteFailureException(name);
 	}
 
 	public void saveGame(G saveObject, String name) {
