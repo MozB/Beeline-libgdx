@@ -262,7 +262,7 @@ public class BeelineAssetManager {
                 Color.WHITE, left, right, top, bottom);
     }
 
-    protected TextButton.TextButtonStyle getActorStyle(BeelineAssetPath upTexture, BeelineAssetPath downTexture, BeelineAssetPath disabledTexture,
+    public TextButton.TextButtonStyle getActorStyle(BeelineAssetPath upTexture, BeelineAssetPath downTexture, BeelineAssetPath disabledTexture,
 													 BeelineAssetPath checkedTexture, Color upColor, Color downColor, Color disabledColor, Color checkedColor,
 													 Color fontColor, Color checkedFontColor, Color disabledFontColor, int left, int right, int top,
 													 int bottom) {

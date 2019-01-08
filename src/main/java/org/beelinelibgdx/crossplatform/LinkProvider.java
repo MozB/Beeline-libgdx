@@ -1,7 +1,8 @@
 package org.beelinelibgdx.crossplatform;
 
-public interface FacebookLinkProvider {
+public interface LinkProvider {
 
 	void openFacebookPage(String facebookAppURI, String facebookWebURL);
+	void openPlayStore();
 
 }
