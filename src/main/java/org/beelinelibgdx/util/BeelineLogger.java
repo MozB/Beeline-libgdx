@@ -4,11 +4,15 @@ import com.badlogic.gdx.Gdx;
 
 public class BeelineLogger {
 
+	static boolean enabled = true;
+
 	public static void log(String tag, String message) {
-		if (Gdx.app != null) {
-			Gdx.app.log(tag, message);
-		} else {
-			System.out.println("INFO: " + tag + ": " + message);
+		if (enabled) {
+			if (Gdx.app != null) {
+				Gdx.app.log(tag, message);
+			} else {
+				System.out.println("INFO: " + tag + ": " + message);
+			}
 		}
 	}
 
@@ -16,4 +20,11 @@ public class BeelineLogger {
 		log(object.getClass().getSimpleName(), message);
 	}
 
+	public static void setEnabled(boolean b) {
+		enabled = b;
+	}
+
+	public static boolean isEnabled() {
+		return enabled;
+	}
 }
