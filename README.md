@@ -9,6 +9,7 @@ I have personally used Beeline with libgdx to make the following games.
 * [Contract Chef](https://play.google.com/store/apps/details?id=com.moz.chef)
 * [Pixel Pirates](https://play.google.com/store/apps/details?id=com.moz.pixelpirates)
 * [Big Politics Inc](https://play.google.com/store/apps/details?id=com.moz.politics)
+* [Tennis Superstars](https://play.google.com/store/apps/details?id=com.moz.tennis)
 
 ## Key Features
 
