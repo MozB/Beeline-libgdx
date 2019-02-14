@@ -1,38 +1,39 @@
 package org.beelinelibgdx.actors;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
-public class BeelineActor extends TextButton implements BeelineRefreshable {
+public class BeelineActor extends Actor {
 
-    public BeelineActor(TextButtonStyle style, float width, float height) {
-        this(style, width, height, "");
+    private Sprite sprite;
+
+    public BeelineActor(Sprite sprite, float width, float height) {
+        this(sprite);
+        setWidth(width);
+        setHeight(height);
     }
 
-    public BeelineActor(TextButtonStyle style, float width, float height, String label) {
-        super(label, style);
+    public BeelineActor(Sprite sprite) {
+        this.sprite = sprite;
+        setWidth(sprite.getWidth());
+        setHeight(sprite.getHeight());
 
         addListener(new InputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.app.log(this.getClass().getName(),
-                        getText().toString() + " touchUp()" + (isChecked() ? " checked" : ""));
                 onTouchUp();
             }
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.app.log(this.getClass().getName(),
-                        getText().toString() + " touchDown()" + (isChecked() ? " checked" : ""));
                 onTouchDown();
                 return true;
             }
         });
-
-        setWidth(width);
-        setHeight(height);
     }
 
     public void onTouchUp() {
@@ -44,8 +45,30 @@ public class BeelineActor extends TextButton implements BeelineRefreshable {
     }
 
     @Override
-    public void refresh() {
-
+    public void draw(Batch batch, float alpha) {
+        Color color = super.getColor();
+        batch.setColor(color.r, color.g, color.b, color.a * alpha);
+        batch.draw(sprite, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(),
+                getScaleY(), getRotation());
     }
-}
 
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+        setBounds(getX(), getY(), getWidth(), getHeight());
+    }
+
+    public Sprite getSprite() {
+        return sprite;
+    }
+
+    public void size(int scale) {
+        setWidth(getWidth() * scale);
+        setHeight(getHeight() * scale);
+    }
+
+    // @Override
+    // public Color getColor() {
+    // return sprite.getColor();
+    // }
+}

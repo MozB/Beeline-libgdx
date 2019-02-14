@@ -1,18 +1,19 @@
 package org.beelinelibgdx.tooling;
 
+@Deprecated
 public interface BeelineToolingConfig {
 
-    boolean shouldGenerateFontData();
-
-    boolean shouldGenerateSpriteSheet();
-
-    String getImgSourceDirectoryPath();
-
-    String getImgOutputDirectoryPath();
+    boolean shouldGenerateFont();
 
     String getFontSourceFilePath();
 
     String getFontDataOutputFilePath();
+
+    boolean shouldGenerateSpriteSheet();
+
+    String getSpriteSheetSourceDirectoryPath();
+
+    String getSpriteSheetOutputDirectoryPath();
 
     String getSaveGameDirectoryPath();
 

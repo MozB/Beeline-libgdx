@@ -3,7 +3,7 @@ package org.beelinelibgdx.tooling;
 class NoOpBeelineToolingConfig implements BeelineToolingConfig {
 
     @Override
-    public boolean shouldGenerateFontData() {
+    public boolean shouldGenerateFont() {
         return false;
     }
 
@@ -13,12 +13,12 @@ class NoOpBeelineToolingConfig implements BeelineToolingConfig {
     }
 
     @Override
-    public String getImgSourceDirectoryPath() {
+    public String getSpriteSheetSourceDirectoryPath() {
         return null;
     }
 
     @Override
-    public String getImgOutputDirectoryPath() {
+    public String getSpriteSheetOutputDirectoryPath() {
         return null;
     }
 

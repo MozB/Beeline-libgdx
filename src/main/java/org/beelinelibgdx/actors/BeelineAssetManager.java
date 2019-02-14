@@ -1,10 +1,12 @@
 package org.beelinelibgdx.actors;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -28,6 +30,7 @@ import com.google.common.collect.Lists;
 import org.beelinelibgdx.exception.BeelineMissingAssetRuntimeException;
 import org.beelinelibgdx.tooling.BeelineToolingConfig;
 
+import java.io.File;
 import java.util.List;
 
 public class BeelineAssetManager {
@@ -38,13 +41,28 @@ public class BeelineAssetManager {
 	private AssetManager manager;
 	private Preferences preferences;
     private BitmapFont font;
-    private BeelineToolingConfig config;
+    private PreGameLaunchConfig preGameLaunchConfig;
 
+    @Deprecated
     public BeelineAssetManager(BeelineToolingConfig config) {
-        this.config = config;
+    	preGameLaunchConfig = new PreGameLaunchConfig();
+		preGameLaunchConfig.fontDataOutputFilePath = config.getFontDataOutputFilePath();
+		preGameLaunchConfig.shouldGenerateFont = config.shouldGenerateFont();
+		preGameLaunchConfig.fontSourceFilePath = config.getFontSourceFilePath();
+		preGameLaunchConfig.fontDataOutputFilePath = config.getFontDataOutputFilePath();
+		preGameLaunchConfig.shouldGenerateSpriteSheet = config.shouldGenerateSpriteSheet();
+		preGameLaunchConfig.spriteSheetSourceDirectoryPath = config.getSpriteSheetSourceDirectoryPath();
+		preGameLaunchConfig.spriteSheetOutputDirectoryPath = config.getSpriteSheetOutputDirectoryPath();
+		preGameLaunchConfig.saveGameDirectoryPath = config.getSaveGameDirectoryPath();
+	}
+
+	public BeelineAssetManager(PreGameLaunchConfig preGameLaunchConfig) {
+		this.preGameLaunchConfig = preGameLaunchConfig;
 	}
 
 	public final void load() {
+    	validateFilePaths();
+
 		int size;
 		if (GL20.GL_MAX_TEXTURE_SIZE == 2048) {
 			size = 2048;
@@ -52,21 +70,29 @@ public class BeelineAssetManager {
 			size = 4096;
 		}
 
-		if (config.shouldGenerateFontData()) {
-			createFontPng(config);
-		}
+		if (Gdx.app.getType() != Application.ApplicationType.Android) {
+			if (preGameLaunchConfig.shouldGenerateFont) {
+				createFontPng(preGameLaunchConfig);
+			}
 
-		if (config.shouldGenerateSpriteSheet()) {
-			try {
-				createSpriteSheet(config, 2048);
-				createSpriteSheet(config, 4096);
-			} catch (RuntimeException e) {
-				throw new IllegalArgumentException("Exception packing images into sprite sheet, ensure the following:\n\n1) You have an img\\ folder in the root" +
-						" of your android project.\n\n2) You are running the desktop app with a working directory set to projectRoot\\android\\assets\\.", e);
+			if (preGameLaunchConfig.shouldGenerateSpriteSheet) {
+				File file = new File(preGameLaunchConfig.spriteSheetSourceDirectoryPath);
+				if (file.list().length == 0) {
+					throw new IllegalStateException("Exception packing images into sprite sheet, no images were found in the sprite sheet source directory: " +
+							preGameLaunchConfig.spriteSheetSourceDirectoryPath);
+				}
+
+				try {
+					createSpriteSheet(preGameLaunchConfig, 2048);
+					createSpriteSheet(preGameLaunchConfig, 4096);
+				} catch (RuntimeException e) {
+					throw new IllegalArgumentException("Exception packing images into sprite sheet, ensure the following:\n\n1) You have an img\\ folder in the root" +
+							" of your android project.\n\n2) You are running the desktop app with a working directory set to projectRoot\\android\\assets\\.", e);
+				}
 			}
 		}
 
-		atlasPath = config.getImgOutputDirectoryPath() + "/" + size + "/atlas.atlas";
+		atlasPath = preGameLaunchConfig.spriteSheetOutputDirectoryPath + "/" + size + "/atlas.atlas";
 
 		manager = new AssetManager();
 		manager.load(atlasPath, TextureAtlas.class);
@@ -86,6 +112,23 @@ public class BeelineAssetManager {
 		skin.add("default", labelStyle, Label.LabelStyle.class);
 
 		afterLoad();
+	}
+
+	private void validateFilePaths() {
+		FileHandle fontSourceFile = Gdx.files.local(preGameLaunchConfig.fontSourceFilePath);
+		FileHandle spriteSheetSourceDirectory = Gdx.files.local(preGameLaunchConfig.spriteSheetSourceDirectoryPath);
+
+		if (preGameLaunchConfig.shouldGenerateFont && !fontSourceFile.exists()) {
+			throw new IllegalStateException("Cannot find font source at: " + preGameLaunchConfig.fontSourceFilePath);
+		}
+
+		if (preGameLaunchConfig.shouldGenerateSpriteSheet) {
+			if (!spriteSheetSourceDirectory.exists()) {
+				throw new IllegalStateException("Cannot find sprite source directory: " + preGameLaunchConfig.spriteSheetSourceDirectoryPath);
+			} else if (spriteSheetSourceDirectory.list().length == 0) {
+				throw new IllegalStateException("Cannot find any sprites inside spriteSheetSourceDirectoryPath: " + preGameLaunchConfig.spriteSheetSourceDirectoryPath);
+			}
+		}
 	}
 
 	protected void afterLoad() {
@@ -178,7 +221,7 @@ public class BeelineAssetManager {
 		}
 	}
 
-	private void createSpriteSheet(BeelineToolingConfig config, int size) {
+	private void createSpriteSheet(PreGameLaunchConfig config, int size) {
 		TexturePacker.Settings settings = new TexturePacker.Settings();
 		settings.maxWidth = size;
 		settings.maxHeight = size;
@@ -187,11 +230,11 @@ public class BeelineAssetManager {
 		settings.combineSubdirectories = true;
 		TexturePacker.process(
 				settings,
-				config.getImgSourceDirectoryPath(),
-				config.getImgOutputDirectoryPath() + "/" + size + "/", "atlas");
+				config.spriteSheetSourceDirectoryPath,
+				config.spriteSheetOutputDirectoryPath + "/" + size + "/", "atlas");
 	}
 
-    private void createFontPng(BeelineToolingConfig config) {
+    private void createFontPng(PreGameLaunchConfig preGameLaunchConfig) {
 		BitmapFontWriter.FontInfo info = new BitmapFontWriter.FontInfo();
 		info.padding = new BitmapFontWriter.Padding(1, 1, 1, 1);
 
@@ -204,23 +247,23 @@ public class BeelineAssetManager {
 		param.packer = new PixmapPacker(1024, 1024, Pixmap.Format.RGBA8888, 2, false,
 		new PixmapPacker.SkylineStrategy());
 
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.local(config.getFontSourceFilePath()));
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.local(preGameLaunchConfig.fontSourceFilePath));
 		FreeTypeFontGenerator.FreeTypeBitmapFontData data = generator.generateData(param);
 
 		BitmapFontWriter.writePixmaps(
         		param.packer.getPages(),
-				Gdx.files.local(config.getImgSourceDirectoryPath()),
+				Gdx.files.local(preGameLaunchConfig.spriteSheetSourceDirectoryPath),
 				FONT_FILE_PATH);
         BitmapFontWriter.writeFont(
 		 		data,
-				new String[] { config.getImgSourceDirectoryPath() + FONT_FILE_PATH + ".png" },
+				new String[] { preGameLaunchConfig.spriteSheetSourceDirectoryPath + FONT_FILE_PATH + ".png" },
                 Gdx.files.local(getFontSpriteFilePath()),
                 info,
                 512, 512);
 	}
 
     private String getFontSpriteFilePath() {
-        return config.getFontDataOutputFilePath() + "/font";
+        return preGameLaunchConfig.fontDataOutputFilePath + "/font";
     }
 
     public BitmapFont getFont() {
@@ -247,25 +290,25 @@ public class BeelineAssetManager {
 		return atlasPath;
 	}
 	
-    public TextButton.TextButtonStyle getActorStyle(BeelineAssetPath path) {
-        return getActorStyle(path, path, path, path, null, null, null, null, Color.WHITE, Color.WHITE,
+    public TextButton.TextButtonStyle createNinePatchStyle(BeelineAssetPath path) {
+        return createNinePatchStyle(path, path, path, path, null, null, null, null, Color.WHITE, Color.WHITE,
                 Color.WHITE, 0, 0, 0, 0);
     }
 
-    public TextButton.TextButtonStyle getActorStyle(BeelineAssetPath path, int border) {
-        return getActorStyle(path, path, path, path, null, null, null, null, Color.WHITE, Color.WHITE,
+    public TextButton.TextButtonStyle createNinePatchStyle(BeelineAssetPath path, int border) {
+        return createNinePatchStyle(path, path, path, path, null, null, null, null, Color.WHITE, Color.WHITE,
                 Color.WHITE, border, border, border, border);
     }
 
-    public TextButton.TextButtonStyle getActorStyle(BeelineAssetPath path, int left, int right, int top, int bottom) {
-        return getActorStyle(path, path, path, path, null, null, null, null, Color.WHITE, Color.WHITE,
+    public TextButton.TextButtonStyle createNinePatchStyle(BeelineAssetPath path, int left, int right, int top, int bottom) {
+        return createNinePatchStyle(path, path, path, path, null, null, null, null, Color.WHITE, Color.WHITE,
                 Color.WHITE, left, right, top, bottom);
     }
 
-    public TextButton.TextButtonStyle getActorStyle(BeelineAssetPath upTexture, BeelineAssetPath downTexture, BeelineAssetPath disabledTexture,
-													 BeelineAssetPath checkedTexture, Color upColor, Color downColor, Color disabledColor, Color checkedColor,
-													 Color fontColor, Color checkedFontColor, Color disabledFontColor, int left, int right, int top,
-													 int bottom) {
+    public TextButton.TextButtonStyle createNinePatchStyle(BeelineAssetPath upTexture, BeelineAssetPath downTexture, BeelineAssetPath disabledTexture,
+														   BeelineAssetPath checkedTexture, Color upColor, Color downColor, Color disabledColor, Color checkedColor,
+														   Color fontColor, Color checkedFontColor, Color disabledFontColor, int left, int right, int top,
+														   int bottom) {
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = getFont();
         {
@@ -317,7 +360,17 @@ public class BeelineAssetManager {
 		return skin;
 	}
 
-	public BeelineToolingConfig getConfig() {
-		return config;
+	public PreGameLaunchConfig getPreGameLaunchConfig() {
+		return preGameLaunchConfig;
+	}
+
+	public static class PreGameLaunchConfig {
+		public boolean shouldGenerateFont = true;
+		public String fontSourceFilePath = "../fonts/font.ttf";
+		public String fontDataOutputFilePath = "gen/fonts/font";
+		public boolean shouldGenerateSpriteSheet = true;
+		public String spriteSheetSourceDirectoryPath = "../img-in/";
+		public String spriteSheetOutputDirectoryPath = "gen/";
+		public String saveGameDirectoryPath = "gen/savegames/";
 	}
 }

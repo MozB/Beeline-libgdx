@@ -33,6 +33,10 @@ public abstract class BeelineGame<G extends Serializable> extends Game {
 	private OrthographicCamera camera;
 
 	@SuppressWarnings("static-access")
+	public BeelineGame(int width, int height) {
+		this(width, height, new BeelineAssetManager(new BeelineAssetManager.PreGameLaunchConfig()));
+	}
+
 	public BeelineGame(int width, int height, BeelineAssetManager assets) {
 		this.width = width;
 		this.height = height;
@@ -63,7 +67,7 @@ public abstract class BeelineGame<G extends Serializable> extends Game {
 	public Object loadObject(String name) throws IOException, ClassNotFoundException, BeelineLoadFailureException, BeelineLoadFileNotFoundException {
 		// unit testing
 		if (Gdx.files != null) {
-			FileHandle file = Gdx.files.local( assets.getConfig().getSaveGameDirectoryPath() + "/" + name);
+			FileHandle file = Gdx.files.local( assets.getPreGameLaunchConfig().saveGameDirectoryPath + "/" + name);
 			if (file.exists()) {
 				byte[] bytes = file.readBytes();
 				ByteArrayInputStream in = new ByteArrayInputStream(bytes);
@@ -82,7 +86,7 @@ public abstract class BeelineGame<G extends Serializable> extends Game {
 	public boolean deleteObject(String name) throws BeelineLoadFileNotFoundException, BeelineDeleteFailureException {
 		// unit testing
 		if (Gdx.files != null) {
-			FileHandle file = Gdx.files.local( assets.getConfig().getSaveGameDirectoryPath() + "/" + name);
+			FileHandle file = Gdx.files.local( assets.getPreGameLaunchConfig().saveGameDirectoryPath + "/" + name);
 			if (file.exists()) {
 				return file.delete();
 			} else {
@@ -114,7 +118,7 @@ public abstract class BeelineGame<G extends Serializable> extends Game {
 			BeelineLogger.log("SAVE", "End to byte array");
 
 			BeelineLogger.log("SAVE", "Start write bytes");
-			FileHandle file = Gdx.files.local(assets.getConfig().getSaveGameDirectoryPath() + "/" + name);
+			FileHandle file = Gdx.files.local(assets.getPreGameLaunchConfig().saveGameDirectoryPath + "/" + name);
 			file.writeBytes(array, false);
 			BeelineLogger.log("SAVE", "End write bytes");
 

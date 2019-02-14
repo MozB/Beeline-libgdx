@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import org.beelinelibgdx.actors.BeelineRefreshable;
 import org.beelinelibgdx.actors.BeelineRemovable;
 
-public abstract class BeelineScreen extends Stage implements Screen, InputProcessor, BeelineRefreshable {
+public class BeelineScreen extends Stage implements Screen, InputProcessor, BeelineRefreshable {
 
     private FPSLogger log;
     private boolean firstRender = true;
@@ -26,7 +26,9 @@ public abstract class BeelineScreen extends Stage implements Screen, InputProces
         GLProfiler.enable();
     }
 
-    public abstract BeelineRemovable getScreenContentAsRemoveable();
+    public BeelineRemovable getScreenContentAsRemoveable() {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public void show() {
