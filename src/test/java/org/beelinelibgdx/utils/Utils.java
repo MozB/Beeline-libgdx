@@ -6,8 +6,8 @@ public class Utils {
 
     public static BeelineAssetManager.PreGameLaunchConfig createWorkingTestConfig() {
         BeelineAssetManager.PreGameLaunchConfig config = new BeelineAssetManager.PreGameLaunchConfig();
-        config.shouldGenerateFont = true;
-        config.shouldGenerateSpriteSheet = true;
+        config.shouldAttemptToGenerateFont = true;
+        config.shouldAttemptToGenerateSpriteSheet = true;
         config.fontSourceFilePath = "resources/test/simplegame/fonts/font.ttf";
         config.fontDataOutputFilePath = "resources/test/simplegame/tmp/fonts/";
         config.spriteSheetSourceDirectoryPath = "resources/test/simplegame/img-in/";

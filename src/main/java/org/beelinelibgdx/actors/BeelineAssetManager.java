@@ -22,16 +22,23 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.tools.FileProcessor;
 import com.badlogic.gdx.tools.bmfont.BitmapFontWriter;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.google.common.collect.Lists;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.beelinelibgdx.exception.BeelineMissingAssetRuntimeException;
 import org.beelinelibgdx.tooling.BeelineToolingConfig;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 public class BeelineAssetManager {
 
@@ -47,10 +54,10 @@ public class BeelineAssetManager {
     public BeelineAssetManager(BeelineToolingConfig config) {
     	preGameLaunchConfig = new PreGameLaunchConfig();
 		preGameLaunchConfig.fontDataOutputFilePath = config.getFontDataOutputFilePath();
-		preGameLaunchConfig.shouldGenerateFont = config.shouldGenerateFont();
+		preGameLaunchConfig.shouldAttemptToGenerateFont = config.shouldGenerateFont();
 		preGameLaunchConfig.fontSourceFilePath = config.getFontSourceFilePath();
 		preGameLaunchConfig.fontDataOutputFilePath = config.getFontDataOutputFilePath();
-		preGameLaunchConfig.shouldGenerateSpriteSheet = config.shouldGenerateSpriteSheet();
+		preGameLaunchConfig.shouldAttemptToGenerateSpriteSheet = config.shouldGenerateSpriteSheet();
 		preGameLaunchConfig.spriteSheetSourceDirectoryPath = config.getSpriteSheetSourceDirectoryPath();
 		preGameLaunchConfig.spriteSheetOutputDirectoryPath = config.getSpriteSheetOutputDirectoryPath();
 		preGameLaunchConfig.saveGameDirectoryPath = config.getSaveGameDirectoryPath();
@@ -70,12 +77,12 @@ public class BeelineAssetManager {
 			size = 4096;
 		}
 
-		if (Gdx.app.getType() != Application.ApplicationType.Android) {
-			if (preGameLaunchConfig.shouldGenerateFont) {
+		if (Gdx.app.getType() == Application.ApplicationType.Desktop) {
+			if (shouldGenerateFontPngs()) {
 				createFontPng(preGameLaunchConfig);
 			}
 
-			if (preGameLaunchConfig.shouldGenerateSpriteSheet) {
+			if (shouldGenerateSpriteSheet()) {
 				File file = new File(preGameLaunchConfig.spriteSheetSourceDirectoryPath);
 				if (file.list().length == 0) {
 					throw new IllegalStateException("Exception packing images into sprite sheet, no images were found in the sprite sheet source directory: " +
@@ -114,15 +121,62 @@ public class BeelineAssetManager {
 		afterLoad();
 	}
 
+	private boolean shouldGenerateFontPngs() {
+		if (!preGameLaunchConfig.shouldAttemptToGenerateFont) {
+			return false;
+		}
+		return isHashForFilesDifferent(Lists.newArrayList(
+				Gdx.files.local(preGameLaunchConfig.fontSourceFilePath).file()),
+				"fontPngHash");
+	}
+
+	private boolean shouldGenerateSpriteSheet() {
+    	if (!preGameLaunchConfig.shouldAttemptToGenerateSpriteSheet) {
+    		return false;
+		}
+		final ArrayList<File> files = new ArrayList();
+		FileProcessor settingsProcessor = new FileProcessor() {
+			protected void processFile (Entry inputFile) throws Exception {
+				files.add(inputFile.inputFile);
+			}
+		};
+		//settingsProcessor.addInputRegex("pack\\.json");
+		try {
+			settingsProcessor.process(preGameLaunchConfig.spriteSheetSourceDirectoryPath, null);
+		} catch (Exception e) {
+			throw new IllegalStateException();
+		}
+		// Sort parent first.
+		Collections.sort(files, new Comparator<File>() {
+			public int compare (File file1, File file2) {
+				return file1.toString().length() - file2.toString().length();
+			}
+		});
+
+		return isHashForFilesDifferent(files, "spriteSheetHash");
+	}
+
+	private boolean isHashForFilesDifferent(ArrayList<File> files, String hashKey) {
+		String newConcatHash = "";
+		String oldHash = getPreferences().getString(hashKey, "");
+		for (File file : files) {
+			newConcatHash += DigestUtils.md5Hex(file.toString() + file.lastModified() + file.length());
+		}
+		String newHash = DigestUtils.md5Hex(newConcatHash);
+		getPreferences().putString(hashKey, newHash);
+		getPreferences().flush();
+		return !newHash.equals(oldHash);
+	}
+
 	private void validateFilePaths() {
 		FileHandle fontSourceFile = Gdx.files.local(preGameLaunchConfig.fontSourceFilePath);
 		FileHandle spriteSheetSourceDirectory = Gdx.files.local(preGameLaunchConfig.spriteSheetSourceDirectoryPath);
 
-		if (preGameLaunchConfig.shouldGenerateFont && !fontSourceFile.exists()) {
+		if (preGameLaunchConfig.shouldAttemptToGenerateFont && !fontSourceFile.exists()) {
 			throw new IllegalStateException("Cannot find font source at: " + preGameLaunchConfig.fontSourceFilePath);
 		}
 
-		if (preGameLaunchConfig.shouldGenerateSpriteSheet) {
+		if (preGameLaunchConfig.shouldAttemptToGenerateSpriteSheet) {
 			if (!spriteSheetSourceDirectory.exists()) {
 				throw new IllegalStateException("Cannot find sprite source directory: " + preGameLaunchConfig.spriteSheetSourceDirectoryPath);
 			} else if (spriteSheetSourceDirectory.list().length == 0) {
@@ -136,11 +190,11 @@ public class BeelineAssetManager {
 	}
 
 	protected List<BeelineAssetPath> getMusics() {
-		return Lists.newArrayList();
+		return newArrayList();
 	}
 
 	protected List<BeelineAssetPath> getSounds() {
-		return Lists.newArrayList();
+		return newArrayList();
 	}
 
 	public void loadMusic(List<BeelineAssetPath> paths) {
@@ -365,10 +419,10 @@ public class BeelineAssetManager {
 	}
 
 	public static class PreGameLaunchConfig {
-		public boolean shouldGenerateFont = true;
+		public boolean shouldAttemptToGenerateFont = true;
 		public String fontSourceFilePath = "../fonts/font.ttf";
 		public String fontDataOutputFilePath = "gen/fonts/font";
-		public boolean shouldGenerateSpriteSheet = true;
+		public boolean shouldAttemptToGenerateSpriteSheet = true;
 		public String spriteSheetSourceDirectoryPath = "../img-in/";
 		public String spriteSheetOutputDirectoryPath = "gen/";
 		public String saveGameDirectoryPath = "gen/savegames/";
