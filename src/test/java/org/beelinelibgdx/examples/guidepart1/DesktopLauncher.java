@@ -1,9 +1,8 @@
-package org.beelinelibgdx.examples.setupexample;
+package org.beelinelibgdx.examples.guidepart1;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-import org.beelinelibgdx.actors.BeelineAssetManager;
 import org.junit.Test;
 
 public class DesktopLauncher {
@@ -15,8 +14,8 @@ public class DesktopLauncher {
 
     }
 
-    @Test
-    public void test() {
-
-    }
+//    @Test
+//    public void test() {
+//
+//    }
 }

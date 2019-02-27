@@ -1,13 +1,11 @@
-package org.beelinelibgdx.examples.setupexample;
+package org.beelinelibgdx.examples.guidepart1;
 
 import com.badlogic.gdx.graphics.Color;
 
 import org.beelinelibgdx.BeelineGame;
 import org.beelinelibgdx.actors.BeelineActor;
 import org.beelinelibgdx.actors.BeelineAssetManager;
-import org.beelinelibgdx.actors.BeelineAssetPath;
 import org.beelinelibgdx.actors.BeelineLabel;
-import org.beelinelibgdx.actors.BeelineRemovable;
 import org.beelinelibgdx.screens.BeelineScreen;
 
 import static org.beelinelibgdx.utils.Utils.createWorkingTestConfig;
