@@ -23,7 +23,7 @@ public class BeelineScreen extends Stage implements Screen, InputProcessor, Beel
     public BeelineScreen(Viewport v) {
         super(v);
         log = new FPSLogger();
-        GLProfiler.enable();
+//        GLProfiler.enable();
     }
 
     public BeelineRemovable getScreenContentAsRemoveable() {

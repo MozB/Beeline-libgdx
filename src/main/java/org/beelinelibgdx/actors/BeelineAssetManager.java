@@ -68,8 +68,6 @@ public class BeelineAssetManager {
 	}
 
 	public final void load() {
-    	validateFilePaths();
-
 		int size;
 		if (GL20.GL_MAX_TEXTURE_SIZE == 2048) {
 			size = 2048;
@@ -78,6 +76,7 @@ public class BeelineAssetManager {
 		}
 
 		if (Gdx.app.getType() == Application.ApplicationType.Desktop) {
+			validateFilePaths();
 			if (shouldGenerateFontPngs()) {
 				createFontPng(preGameLaunchConfig);
 			}
