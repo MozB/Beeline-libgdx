@@ -8,11 +8,11 @@ public class PreGameLaunchConfig {
 
     public boolean shouldAttemptToGenerateFont = true;
     private String fontSourceLocalFilePath;
-    public String fontDataOutputFilePath = "beeline-gen/fonts/font";
+    public String fontDataOutputFilePath = "beeline-out/fonts/font";
     public boolean shouldAttemptToGenerateSpriteSheet = true;
-    private String spriteSheetSourceLocalDirectoryPath;
-    public String spriteSheetOutputLocalDirectoryPath = "beeline-gen/";
-    public String saveGameDirectoryPath = "beeline-gen/savegames/";
+    private String spriteSheetSourceLocalDirectoryPath = "beeline-in/img/";
+    public String spriteSheetOutputLocalDirectoryPath = "beeline-out/img/";
+    public String saveGameDirectoryPath = "beeline-out/savegames/";
 
     public FileHandle getFontSourceFileHandle() {
         return fontSourceLocalFilePath == null ?
