@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.beelinelibgdx.actors.BeelineAssetManager;
+import org.beelinelibgdx.actors.PreGameLaunchConfig;
 import org.beelinelibgdx.exception.BeelineDeleteFailureException;
 import org.beelinelibgdx.exception.BeelineLoadFailureException;
 import org.beelinelibgdx.exception.BeelineLoadFileNotFoundException;
@@ -34,7 +35,7 @@ public abstract class BeelineGame<G extends Serializable> extends Game {
 
 	@SuppressWarnings("static-access")
 	public BeelineGame(int width, int height) {
-		this(width, height, new BeelineAssetManager(new BeelineAssetManager.PreGameLaunchConfig()));
+		this(width, height, new BeelineAssetManager(new PreGameLaunchConfig()));
 	}
 
 	public BeelineGame(int width, int height, BeelineAssetManager assets) {

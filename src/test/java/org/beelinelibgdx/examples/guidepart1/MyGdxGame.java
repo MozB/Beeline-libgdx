@@ -8,12 +8,12 @@ import org.beelinelibgdx.actors.BeelineAssetManager;
 import org.beelinelibgdx.actors.BeelineLabel;
 import org.beelinelibgdx.screens.BeelineScreen;
 
-import static org.beelinelibgdx.utils.Utils.createWorkingTestConfig;
+import static org.beelinelibgdx.utils.Utils.createWorkingTestConfigWithOverrides;
 
 public class MyGdxGame extends BeelineGame {
 
     public MyGdxGame() {
-        super(800, 800, new BeelineAssetManager(createWorkingTestConfig()));
+        super(800, 800, new BeelineAssetManager(createWorkingTestConfigWithOverrides()));
     }
 
     @Override

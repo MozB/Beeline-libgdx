@@ -9,31 +9,57 @@ import org.beelinelibgdx.BeelineGame;
 import org.beelinelibgdx.actors.BeelineNinePatch;
 import org.beelinelibgdx.actors.BeelineAssetManager;
 import org.beelinelibgdx.actors.BeelineAssetPath;
+import org.beelinelibgdx.actors.PreGameLaunchConfig;
 import org.beelinelibgdx.integration.GameTest;
+import org.beelinelibgdx.util.BeelineLogger;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.beelinelibgdx.utils.Utils.createWorkingTestConfig;
+import static org.beelinelibgdx.utils.Utils.createWorkingTestConfigWithClasspathDefaults;
+import static org.beelinelibgdx.utils.Utils.createWorkingTestConfigWithOverrides;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+@PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*",  "org.springframework.context.*", "org.apache.log4j.*"})
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( { Stage.class })
 public class TestSimpleGame extends GameTest {
 
+    /**
+     * Tests that simple game assets can be loaded from local file configuration
+     */
     @Test
-    public void testSimpleGame() throws Exception {
+    public void testSimpleGameWithOverrides() throws Exception {
 
         /**Setup**/
-        BeelineGame game = new SimpleGame(200, 200);
+        BeelineGame game = new SimpleGame(200, 200, new BeelineAssetManager(createWorkingTestConfigWithOverrides()));
         game.create();
 
+        assertGameFunctional(game);
+    }
+
+    /**
+     * Tests that simple game assets can be loaded from classpath defaults from Beeline-libgdx
+     */
+    @Test
+    public void testSimpleGameWithClasspathDefaults() throws Exception {
+
+        /**Setup**/
+        BeelineGame game = new SimpleGame(200, 200, new BeelineAssetManager(createWorkingTestConfigWithClasspathDefaults()));
+        game.create();
+
+        assertGameFunctional(game);
+    }
+
+    private void assertGameFunctional(BeelineGame game) throws Exception {
         /**Test sprites can be created from the generated spritesheet**/
         BeelineAssetPath squarePath = () -> "square";
         Sprite sprite = game.getAssetManager().createSprite(squarePath);
@@ -63,21 +89,20 @@ public class TestSimpleGame extends GameTest {
 
         SimpleScreen screen = new SimpleScreen(game.getViewport(), actor);
         game.setScreen(screen);
-
     }
 
     @Test
     public void testSimpleGameIllegalConfigurations() {
         BeelineGame game;
-        BeelineAssetManager.PreGameLaunchConfig workingTestConfig;
+        PreGameLaunchConfig workingTestConfig;
 
         /**Works**/
-        game = new SimpleGame(200, 200, new BeelineAssetManager(createWorkingTestConfig()));
+        game = new SimpleGame(200, 200, new BeelineAssetManager(createWorkingTestConfigWithOverrides()));
         game.create();
 
         /**No source font**/
-        workingTestConfig = createWorkingTestConfig();
-        workingTestConfig.fontSourceFilePath = "dfg45dfg";
+        workingTestConfig = createWorkingTestConfigWithOverrides();
+        workingTestConfig.setFontSourceLocalFilePath("dfg45dfg");
         game = new SimpleGame(200, 200, new BeelineAssetManager(workingTestConfig));
         try {
             game.create();
@@ -87,8 +112,8 @@ public class TestSimpleGame extends GameTest {
         }
 
         /**No source sprite directory**/
-        workingTestConfig = createWorkingTestConfig();
-        workingTestConfig.spriteSheetSourceDirectoryPath = "dfg45dfg";
+        workingTestConfig = createWorkingTestConfigWithOverrides();
+        workingTestConfig.setSpriteSheetSourceLocalDirectoryPath("dfg45dfg");
         game = new SimpleGame(200, 200, new BeelineAssetManager(workingTestConfig));
         try {
             game.create();
@@ -98,8 +123,8 @@ public class TestSimpleGame extends GameTest {
         }
 
         /**No sprites in source directory**/
-        workingTestConfig = createWorkingTestConfig();
-        workingTestConfig.spriteSheetSourceDirectoryPath = "resources/test/simplegame/empty-img-in/";
+        workingTestConfig = createWorkingTestConfigWithOverrides();
+        workingTestConfig.setSpriteSheetSourceLocalDirectoryPath("simplegame/empty-img-in/");
         game = new SimpleGame(200, 200, new BeelineAssetManager(workingTestConfig));
         try {
             game.create();
@@ -112,8 +137,8 @@ public class TestSimpleGame extends GameTest {
     @Test
     public void testSimpleGameNoAssets() {
         /**Setup**/
-        BeelineAssetManager.PreGameLaunchConfig preLaunchConfig = new BeelineAssetManager.PreGameLaunchConfig();
-        preLaunchConfig.spriteSheetSourceDirectoryPath = "dfsfdsfrg4534dfg4";
+        PreGameLaunchConfig preLaunchConfig = new PreGameLaunchConfig();
+        preLaunchConfig.setSpriteSheetSourceLocalDirectoryPath("dfsfdsfrg4534dfg4");
 
         BeelineAssetManager assets = new BeelineAssetManager(preLaunchConfig);
         BeelineGame game = new SimpleGame(200, 200, assets);
@@ -126,8 +151,18 @@ public class TestSimpleGame extends GameTest {
     }
 
     @Before
-    public void setup() {
-        Gdx.files.local("resources/test/simplegame/tmp/").deleteDirectory();
+    public void before() {
+        deleteTmpDirectory();
+    }
+
+    @After
+    public void after() {
+        deleteTmpDirectory();
+    }
+
+    private void deleteTmpDirectory() {
+        boolean deleted = Gdx.files.local("simplegame/tmp/").deleteDirectory();
+        BeelineLogger.log("Deleting temp directory", deleted + "");
     }
 
     private class SimpleGame extends BeelineGame<GameModel> {
@@ -136,8 +171,10 @@ public class TestSimpleGame extends GameTest {
             super(x, y, assets);
         }
 
-        public SimpleGame(int x, int y) {
-            super(x, y, new BeelineAssetManager(createWorkingTestConfig()));
+        @Override
+        public void create() {
+            getAssetManager().getPreferences().clear();
+            super.create();
         }
     }
 }
