@@ -35,7 +35,6 @@ import org.beelinelibgdx.tooling.BeelineToolingConfig;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -55,10 +54,10 @@ public class BeelineAssetManager {
     	preGameLaunchConfig = new PreGameLaunchConfig();
 		preGameLaunchConfig.fontDataOutputFilePath = config.getFontDataOutputFilePath();
 		preGameLaunchConfig.shouldAttemptToGenerateFont = config.shouldGenerateFont();
-		preGameLaunchConfig.setFontSourceLocalFilePath(config.getFontSourceFilePath());
+		preGameLaunchConfig.fontSourceLocalFilePath = config.getFontSourceFilePath();
 		preGameLaunchConfig.fontDataOutputFilePath = config.getFontDataOutputFilePath();
 		preGameLaunchConfig.shouldAttemptToGenerateSpriteSheet = config.shouldGenerateSpriteSheet();
-		preGameLaunchConfig.setSpriteSheetSourceLocalDirectoryPath(config.getSpriteSheetSourceDirectoryPath());
+		preGameLaunchConfig.spriteSheetSourceLocalDirectoryPath = config.getSpriteSheetSourceDirectoryPath();
 		preGameLaunchConfig.spriteSheetOutputLocalDirectoryPath = config.getSpriteSheetOutputDirectoryPath();
 		preGameLaunchConfig.saveGameDirectoryPath = config.getSaveGameDirectoryPath();
 	}
@@ -95,14 +94,16 @@ public class BeelineAssetManager {
 
 		atlasPath = preGameLaunchConfig.spriteSheetOutputLocalDirectoryPath + "/" + size + "/atlas.atlas";
 
-		manager = new AssetManager();
-		manager.load(atlasPath, TextureAtlas.class);
-		loadMusic(getMusics());
-		loadSound(getSounds());
-		try {
-			manager.finishLoading();
-		} catch (GdxRuntimeException e) {
-			throw new IllegalStateException("Could not load assets, is the working directory for the desktop application set to android/assets?", e);
+		if (Gdx.files.local(atlasPath).exists()) {
+			manager = new AssetManager();
+			manager.load(atlasPath, TextureAtlas.class);
+			loadMusic(getMusics());
+			loadSound(getSounds());
+			try {
+				manager.finishLoading();
+			} catch (GdxRuntimeException e) {
+				throw new IllegalStateException("Could not load assets, is the working directory for the desktop application set to android/assets?", e);
+			}
 		}
 
 		skin = new Skin();
@@ -120,7 +121,7 @@ public class BeelineAssetManager {
 			return false;
 		}
 		return isHashForFilesDifferent(Lists.newArrayList(
-				preGameLaunchConfig.getFontSourceFileHandle().file()),
+				Gdx.files.local(preGameLaunchConfig.fontSourceLocalFilePath).file()),
 				"fontPngHash");
 	}
 
@@ -136,16 +137,12 @@ public class BeelineAssetManager {
 		};
 		//settingsProcessor.addInputRegex("pack\\.json");
 		try {
-			settingsProcessor.process(preGameLaunchConfig.getSpriteSheetSourceDirectoryFileHandle().path(), null);
+			settingsProcessor.process(preGameLaunchConfig.spriteSheetSourceLocalDirectoryPath, null);
 		} catch (Exception e) {
 			throw new IllegalStateException();
 		}
 		// Sort parent first.
-		Collections.sort(files, new Comparator<File>() {
-			public int compare (File file1, File file2) {
-				return file1.toString().length() - file2.toString().length();
-			}
-		});
+		Collections.sort(files, (file1, file2) -> file1.toString().length() - file2.toString().length());
 
 		return isHashForFilesDifferent(files, "spriteSheetHash");
 	}
@@ -163,8 +160,8 @@ public class BeelineAssetManager {
 	}
 
 	private void validateFilePaths() {
-		FileHandle fontSourceFile = preGameLaunchConfig.getFontSourceFileHandle();
-		FileHandle spriteSheetSourceDirectory = preGameLaunchConfig.getSpriteSheetSourceDirectoryFileHandle();
+		FileHandle fontSourceFile = Gdx.files.local(preGameLaunchConfig.fontSourceLocalFilePath);
+		FileHandle spriteSheetSourceDirectory = Gdx.files.local(preGameLaunchConfig.spriteSheetSourceLocalDirectoryPath);
 
 		if (preGameLaunchConfig.shouldAttemptToGenerateFont && !fontSourceFile.exists()) {
 			throw new IllegalStateException("Cannot find font source at: " + fontSourceFile.path());
@@ -172,9 +169,10 @@ public class BeelineAssetManager {
 
 		if (preGameLaunchConfig.shouldAttemptToGenerateSpriteSheet) {
 			if (!spriteSheetSourceDirectory.exists()) {
-				throw new IllegalStateException("Cannot find sprite source directory: " + preGameLaunchConfig.getSpriteSheetSourceDirectoryFileHandle().path());
+				throw new IllegalStateException("Cannot find sprite source directory: " +
+						preGameLaunchConfig.spriteSheetSourceLocalDirectoryPath);
 			} else if (spriteSheetSourceDirectory.list().length == 0) {
-				throw new IllegalStateException("Cannot find any sprites inside spriteSheetSourceDirectoryPath: " + preGameLaunchConfig.getSpriteSheetSourceDirectoryFileHandle().path());
+				throw new IllegalStateException("Cannot find any sprites inside spriteSheetSourceDirectoryPath: " + preGameLaunchConfig.spriteSheetSourceLocalDirectoryPath);
 			}
 		}
 	}
@@ -278,7 +276,7 @@ public class BeelineAssetManager {
 		settings.combineSubdirectories = true;
 		TexturePacker.process(
 				settings,
-				config.getSpriteSheetSourceDirectoryFileHandle().path(),
+				config.spriteSheetSourceLocalDirectoryPath,
 				config.spriteSheetOutputLocalDirectoryPath + "/" + size + "/", "atlas");
 	}
 
@@ -295,10 +293,10 @@ public class BeelineAssetManager {
 		param.packer = new PixmapPacker(1024, 1024, Pixmap.Format.RGBA8888, 2, false,
 		new PixmapPacker.SkylineStrategy());
 
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(preGameLaunchConfig.getFontSourceFileHandle());
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.local(preGameLaunchConfig.fontSourceLocalFilePath));
 		FreeTypeFontGenerator.FreeTypeBitmapFontData data = generator.generateData(param);
 
-		String spriteSheetOutputLocalDirectoryPath = preGameLaunchConfig.getSpriteSheetSourceDirectoryFileHandle().path();
+		String spriteSheetOutputLocalDirectoryPath = preGameLaunchConfig.spriteSheetSourceLocalDirectoryPath;
 		BitmapFontWriter.writePixmaps(
         		param.packer.getPages(),
 				Gdx.files.local(spriteSheetOutputLocalDirectoryPath),

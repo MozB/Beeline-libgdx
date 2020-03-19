@@ -8,22 +8,11 @@ public class Utils {
         PreGameLaunchConfig config = new PreGameLaunchConfig();
         config.shouldAttemptToGenerateFont = true;
         config.shouldAttemptToGenerateSpriteSheet = true;
-        config.setFontSourceLocalFilePath("simplegame/fonts/font.ttf");
-        config.fontDataOutputFilePath = "simplegame/tmp/fonts/";
-        config.setSpriteSheetSourceLocalDirectoryPath("simplegame/img-in/");
-        config.spriteSheetOutputLocalDirectoryPath = "simplegame/tmp/img/spritesheets/";
-        config.saveGameDirectoryPath = "simplegame/tmp/savegames";
-        return config;
-    }
-
-    public static PreGameLaunchConfig createWorkingTestConfigWithClasspathDefaults() {
-        PreGameLaunchConfig config = new PreGameLaunchConfig();
-        config.shouldAttemptToGenerateFont = true;
-        config.shouldAttemptToGenerateSpriteSheet = true;
-        config.fontDataOutputFilePath = "simplegame/tmp/fonts/";
-        config.setSpriteSheetSourceLocalDirectoryPath("simplegame/img-in/");
-        config.spriteSheetOutputLocalDirectoryPath = "simplegame/tmp/img/spritesheets/";
-        config.saveGameDirectoryPath = "simplegame/tmp/savegames";
+        config.fontSourceLocalFilePath = "src/test/resources/simplegame/fonts/font.ttf";
+        config.fontDataOutputFilePath = "src/test/resources/simplegame/tmp/fonts/";
+        config.spriteSheetSourceLocalDirectoryPath = "src/test/resources/simplegame/img-in/";
+        config.spriteSheetOutputLocalDirectoryPath = "src/test/resources/simplegame/tmp/img/spritesheets/";
+        config.saveGameDirectoryPath = "src/test/resources/simplegame/tmp/savegames";
         return config;
     }
 }

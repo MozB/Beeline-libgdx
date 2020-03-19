@@ -23,7 +23,6 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.beelinelibgdx.utils.Utils.createWorkingTestConfigWithClasspathDefaults;
 import static org.beelinelibgdx.utils.Utils.createWorkingTestConfigWithOverrides;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -46,18 +45,6 @@ public class TestSimpleGame extends GameTest {
         assertGameFunctional(game);
     }
 
-    /**
-     * Tests that simple game assets can be loaded from classpath defaults from Beeline-libgdx
-     */
-    @Test
-    public void testSimpleGameWithClasspathDefaults() throws Exception {
-
-        /**Setup**/
-        BeelineGame game = new SimpleGame(200, 200, new BeelineAssetManager(createWorkingTestConfigWithClasspathDefaults()));
-        game.create();
-
-        assertGameFunctional(game);
-    }
 
     private void assertGameFunctional(BeelineGame game) throws Exception {
         /**Test sprites can be created from the generated spritesheet**/
@@ -73,6 +60,8 @@ public class TestSimpleGame extends GameTest {
         /**Test game can be saved then loaded**/
         String gameName = "a save game";
         game.saveGame(gameModel, gameName);
+        // update variable and ensure it wasn't saved
+        gameModel.variable = 3;
         GameModel loadedGame = (GameModel) game.loadGame(gameName);
         Assert.assertEquals("Variable was saved, then loaded successfully", 2, loadedGame.variable);
 
@@ -102,7 +91,7 @@ public class TestSimpleGame extends GameTest {
 
         /**No source font**/
         workingTestConfig = createWorkingTestConfigWithOverrides();
-        workingTestConfig.setFontSourceLocalFilePath("dfg45dfg");
+        workingTestConfig.fontSourceLocalFilePath = "dfg45dfg";
         game = new SimpleGame(200, 200, new BeelineAssetManager(workingTestConfig));
         try {
             game.create();
@@ -113,7 +102,7 @@ public class TestSimpleGame extends GameTest {
 
         /**No source sprite directory**/
         workingTestConfig = createWorkingTestConfigWithOverrides();
-        workingTestConfig.setSpriteSheetSourceLocalDirectoryPath("dfg45dfg");
+        workingTestConfig.spriteSheetSourceLocalDirectoryPath = "dfg45dfg";
         game = new SimpleGame(200, 200, new BeelineAssetManager(workingTestConfig));
         try {
             game.create();
@@ -124,7 +113,7 @@ public class TestSimpleGame extends GameTest {
 
         /**No sprites in source directory**/
         workingTestConfig = createWorkingTestConfigWithOverrides();
-        workingTestConfig.setSpriteSheetSourceLocalDirectoryPath("simplegame/empty-img-in/");
+        workingTestConfig.spriteSheetSourceLocalDirectoryPath = "src/test/resources/simplegame/empty-img-in/";
         game = new SimpleGame(200, 200, new BeelineAssetManager(workingTestConfig));
         try {
             game.create();
@@ -138,7 +127,7 @@ public class TestSimpleGame extends GameTest {
     public void testSimpleGameNoAssets() {
         /**Setup**/
         PreGameLaunchConfig preLaunchConfig = new PreGameLaunchConfig();
-        preLaunchConfig.setSpriteSheetSourceLocalDirectoryPath("dfsfdsfrg4534dfg4");
+        preLaunchConfig.spriteSheetSourceLocalDirectoryPath = "dfsfdsfrg4534dfg4";
 
         BeelineAssetManager assets = new BeelineAssetManager(preLaunchConfig);
         BeelineGame game = new SimpleGame(200, 200, assets);
@@ -161,7 +150,7 @@ public class TestSimpleGame extends GameTest {
     }
 
     private void deleteTmpDirectory() {
-        boolean deleted = Gdx.files.local("simplegame/tmp/").deleteDirectory();
+        boolean deleted = Gdx.files.local("src/test/resources/simplegame/tmp/").deleteDirectory();
         BeelineLogger.log("Deleting temp directory", deleted + "");
     }
 
