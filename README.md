@@ -21,6 +21,22 @@ I have personally used Beeline-libgdx to make the following games.
 * Simple API for loading and saving game states
 * Much more!
 
-## Installation guide and create your first Beeline game
+## Installation
 
-http://trailblaze.games/creating-your-first-android-game-with-beeline-libgdx-part-1-hello-world/
+```
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+...
+project(":core") {
+    apply plugin: "java"
+
+    dependencies {
+        //compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        compile "com.github.MozB:Beeline-libgdx:0.1.2"
+    }
+}
+```
