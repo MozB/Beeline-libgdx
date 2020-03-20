@@ -94,16 +94,14 @@ public class BeelineAssetManager {
 
 		atlasPath = preGameLaunchConfig.spriteSheetOutputLocalDirectoryPath + "/" + size + "/atlas.atlas";
 
-		if (Gdx.files.local(atlasPath).exists()) {
-			manager = new AssetManager();
-			manager.load(atlasPath, TextureAtlas.class);
-			loadMusic(getMusics());
-			loadSound(getSounds());
-			try {
-				manager.finishLoading();
-			} catch (GdxRuntimeException e) {
-				throw new IllegalStateException("Could not load assets, is the working directory for the desktop application set to android/assets?", e);
-			}
+		manager = new AssetManager();
+		manager.load(atlasPath, TextureAtlas.class);
+		loadMusic(getMusics());
+		loadSound(getSounds());
+		try {
+			manager.finishLoading();
+		} catch (GdxRuntimeException e) {
+			throw new IllegalStateException("Could not load assets, is the working directory for the desktop application set to android/assets?", e);
 		}
 
 		skin = new Skin();
