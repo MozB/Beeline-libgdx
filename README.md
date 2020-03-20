@@ -36,7 +36,7 @@ project(":core") {
 
     dependencies {
         //compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-        compile "com.github.MozB:Beeline-libgdx:0.1.2"
+        compile "com.github.MozB:Beeline-libgdx:0.2.0"
     }
 }
 ```
