@@ -21,6 +21,12 @@ I have personally used Beeline-libgdx to make the following games.
 * Simple API for loading and saving game states
 * Much more!
 
+## Tutorials
+Beeline-libgdx: Tutorial 1, Hello world! (Coming soon)
+
+## Examples
+See https://github.com/MozB/Beeline-libgdx-examples for a full set of working example projects with Beeline-libgdx.
+
 ## Installation
 
 ```
