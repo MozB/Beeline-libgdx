@@ -9,7 +9,8 @@ I have personally used Beeline-libgdx to make the following games.
 * [Tennis Superstars](https://play.google.com/store/apps/details?id=com.moz.tennis)
 * [Contract Chef](https://play.google.com/store/apps/details?id=com.moz.chef)
 * [Pixel Pirates](https://play.google.com/store/apps/details?id=com.moz.pixelpirates)
-* [Big Politics Inc](https://play.google.com/store/apps/details?id=com.moz.politics)
+* [Big Politics Inc: UK](https://play.google.com/store/apps/details?id=com.moz.politics)
+* [Big Poltiics Inc: USA](https://play.google.com/store/apps/details?id=com.moz.politics.us)
 
 ## Key Features
 
@@ -20,6 +21,28 @@ I have personally used Beeline-libgdx to make the following games.
 * Simple API for loading and saving game states
 * Much more!
 
-## Installation guide and create your first Beeline game
+## Tutorials
+Beeline-libgdx: Tutorial 1, Hello world! (Coming soon)
 
-http://trailblaze.games/creating-your-first-android-game-with-beeline-libgdx-part-1-hello-world/
+## Examples
+See https://github.com/MozB/Beeline-libgdx-examples for a full set of working example projects with Beeline-libgdx.
+
+## Installation
+
+```
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+...
+project(":core") {
+    apply plugin: "java"
+
+    dependencies {
+        //compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        compile "com.github.MozB:Beeline-libgdx:0.2.0"
+    }
+}
+```
