@@ -22,7 +22,7 @@ I have personally used Beeline-libgdx to make the following games.
 * Much more!
 
 ## Tutorials
-(Beeline-libgdx: Tutorial 1, Hello world!)[http://trailblaze.games/2020/03/22/beeline-libgdx-tutorial-1-hello-world/]
+[Beeline-libgdx: Tutorial 1, Hello world!](http://trailblaze.games/2020/03/22/beeline-libgdx-tutorial-1-hello-world/)
 
 ## Examples
 See https://github.com/MozB/Beeline-libgdx-examples for a full set of working example projects with Beeline-libgdx.
