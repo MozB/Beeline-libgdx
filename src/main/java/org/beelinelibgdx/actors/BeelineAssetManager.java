@@ -118,6 +118,11 @@ public class BeelineAssetManager {
 		if (!preGameLaunchConfig.shouldAttemptToGenerateFont) {
 			return false;
 		}
+		// always generate if font png is missing
+		if (!Gdx.files.local(preGameLaunchConfig.spriteSheetSourceLocalDirectoryPath + "/" + FONT_FILE_PATH + ".png").exists()) {
+			return true;
+		}
+		// generate font if file has changed
 		return isHashForFilesDifferent(Lists.newArrayList(
 				Gdx.files.local(preGameLaunchConfig.fontSourceLocalFilePath).file()),
 				"fontPngHash");
