@@ -49,19 +49,6 @@ public class BeelineAssetManager {
     private BitmapFont font;
     private PreGameLaunchConfig preGameLaunchConfig;
 
-    @Deprecated
-    public BeelineAssetManager(BeelineToolingConfig config) {
-    	preGameLaunchConfig = new PreGameLaunchConfig();
-		preGameLaunchConfig.fontDataOutputFilePath = config.getFontDataOutputFilePath();
-		preGameLaunchConfig.shouldAttemptToGenerateFont = config.shouldGenerateFont();
-		preGameLaunchConfig.fontSourceLocalFilePath = config.getFontSourceFilePath();
-		preGameLaunchConfig.fontDataOutputFilePath = config.getFontDataOutputFilePath();
-		preGameLaunchConfig.shouldAttemptToGenerateSpriteSheet = config.shouldGenerateSpriteSheet();
-		preGameLaunchConfig.spriteSheetSourceLocalDirectoryPath = config.getSpriteSheetSourceDirectoryPath();
-		preGameLaunchConfig.spriteSheetOutputLocalDirectoryPath = config.getSpriteSheetOutputDirectoryPath();
-		preGameLaunchConfig.saveGameDirectoryPath = config.getSaveGameDirectoryPath();
-	}
-
 	public BeelineAssetManager(PreGameLaunchConfig preGameLaunchConfig) {
 		this.preGameLaunchConfig = preGameLaunchConfig;
 	}
@@ -339,59 +326,51 @@ public class BeelineAssetManager {
 	private String getAtlasPath() {
 		return atlasPath;
 	}
-	
-    public TextButton.TextButtonStyle createNinePatchStyle(BeelineAssetPath path) {
-        return createNinePatchStyle(path, path, path, path, null, null, null, null, Color.WHITE, Color.WHITE,
-                Color.WHITE, 0, 0, 0, 0);
-    }
 
-    public TextButton.TextButtonStyle createNinePatchStyle(BeelineAssetPath path, int border) {
-        return createNinePatchStyle(path, path, path, path, null, null, null, null, Color.WHITE, Color.WHITE,
-                Color.WHITE, border, border, border, border);
-    }
-
-    public TextButton.TextButtonStyle createNinePatchStyle(BeelineAssetPath path, int left, int right, int top, int bottom) {
-        return createNinePatchStyle(path, path, path, path, null, null, null, null, Color.WHITE, Color.WHITE,
-                Color.WHITE, left, right, top, bottom);
-    }
-
-    public TextButton.TextButtonStyle createNinePatchStyle(BeelineAssetPath upTexture, BeelineAssetPath downTexture, BeelineAssetPath disabledTexture,
-														   BeelineAssetPath checkedTexture, Color upColor, Color downColor, Color disabledColor, Color checkedColor,
-														   Color fontColor, Color checkedFontColor, Color disabledFontColor, int left, int right, int top,
-														   int bottom) {
+    public TextButton.TextButtonStyle createNinePatchStyle(NinePatchStyle style) {
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = getFont();
-        {
-            NinePatch ninePatch = getNinePatch(upTexture, left, right, top, bottom);
-            if (upColor != null) {
-                ninePatch.setColor(upColor);
-            }
-            textButtonStyle.up = getNinePatchDrawable(ninePatch);
-        }
-        {
-            NinePatch ninePatch = getNinePatch(downTexture, left, right, top, bottom);
-            if (downColor != null) {
-                ninePatch.setColor(downColor);
-            }
-            textButtonStyle.down = getNinePatchDrawable(ninePatch);
-        }
-        {
-            NinePatch ninePatch = getNinePatch(disabledTexture, left, right, top, bottom);
-            if (disabledColor != null) {
-                ninePatch.setColor(disabledColor);
-            }
-            textButtonStyle.disabled = getNinePatchDrawable(ninePatch);
-        }
-        {
-            NinePatch ninePatch = getNinePatch(checkedTexture, left, right, top, bottom);
-            if (checkedColor != null) {
-                ninePatch.setColor(checkedColor);
-            }
-            textButtonStyle.checked = getNinePatchDrawable(ninePatch);
-            textButtonStyle.checkedFontColor = checkedFontColor;
-        }
-        textButtonStyle.fontColor = fontColor;
-        textButtonStyle.disabledFontColor = disabledFontColor;
+
+		NinePatch ninePatch = getNinePatch(style.texture, style.leftBorder, style.rightBorder, style.topBorder, style.bottomBorder);
+		if (style.color != null) {
+			ninePatch.setColor(style.color);
+		}
+		textButtonStyle.up = getNinePatchDrawable(ninePatch);
+
+		if (style.pressedDownTexture != null) {
+			NinePatch ninePatchDown = getNinePatch(style.pressedDownTexture, style.leftBorder, style.rightBorder, style.topBorder, style.bottomBorder);
+			if (style.pressedDownColor != null) {
+				ninePatchDown.setColor(style.pressedDownColor);
+			}
+			textButtonStyle.down = getNinePatchDrawable(ninePatchDown);
+		} else {
+			textButtonStyle.down = textButtonStyle.up;
+		}
+
+		if (style.disabledTexture != null) {
+			NinePatch ninePatchDisabled = getNinePatch(style.disabledTexture, style.leftBorder, style.rightBorder, style.topBorder, style.bottomBorder);
+			if (style.disabledColor != null) {
+				ninePatchDisabled.setColor(style.disabledColor);
+			}
+			textButtonStyle.disabled = getNinePatchDrawable(ninePatchDisabled);
+		} else {
+			textButtonStyle.disabled = textButtonStyle.up;
+		}
+
+		if (style.checkedTexture != null) {
+			NinePatch ninePatchChecked = getNinePatch(style.checkedTexture, style.leftBorder, style.rightBorder, style.topBorder, style.bottomBorder);
+			if (style.checkedColor != null) {
+				ninePatchChecked.setColor(style.checkedColor);
+			}
+			textButtonStyle.checked = getNinePatchDrawable(ninePatchChecked);
+		} else {
+			textButtonStyle.checked = textButtonStyle.up;
+		}
+
+		textButtonStyle.fontColor = style.fontColor == null ? Color.WHITE : style.fontColor;
+		textButtonStyle.downFontColor = style.pressedDownFontColor == null ? textButtonStyle.fontColor : style.pressedDownFontColor;
+		textButtonStyle.checkedFontColor = style.checkedFontColor == null ? textButtonStyle.fontColor : style.checkedFontColor;
+        textButtonStyle.disabledFontColor = style.disabledFontColor == null ? textButtonStyle.fontColor : style.disabledFontColor;
         return textButtonStyle;
     }
 

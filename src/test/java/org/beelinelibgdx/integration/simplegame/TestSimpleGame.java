@@ -9,7 +9,9 @@ import org.beelinelibgdx.BeelineGame;
 import org.beelinelibgdx.actors.BeelineNinePatch;
 import org.beelinelibgdx.actors.BeelineAssetManager;
 import org.beelinelibgdx.actors.BeelineAssetPath;
+import org.beelinelibgdx.actors.NinePatchStyleBuilder;
 import org.beelinelibgdx.actors.PreGameLaunchConfig;
+import org.beelinelibgdx.actors.PreGameLaunchConfigBuilder;
 import org.beelinelibgdx.integration.GameTest;
 import org.beelinelibgdx.util.BeelineLogger;
 import org.junit.After;
@@ -23,7 +25,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.beelinelibgdx.utils.Utils.createWorkingTestConfigWithOverrides;
+import static org.beelinelibgdx.utils.Utils.createWorkingTestConfigWithOverridesBuilder;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -39,7 +41,8 @@ public class TestSimpleGame extends GameTest {
     public void testSimpleGameWithOverrides() throws Exception {
 
         /**Setup**/
-        BeelineGame game = new SimpleGame(200, 200, new BeelineAssetManager(createWorkingTestConfigWithOverrides()));
+        BeelineGame game = new SimpleGame(200, 200,
+                new BeelineAssetManager(createWorkingTestConfigWithOverridesBuilder().build()));
         game.create();
 
         assertGameFunctional(game);
@@ -69,7 +72,9 @@ public class TestSimpleGame extends GameTest {
         game.resize(400, 400);
 
         /**Test actor can be created and added with text**/
-        BeelineNinePatch actor = new BeelineNinePatch(game.getAssetManager().createNinePatchStyle(squarePath), 100, 100 ,"Hello world!");
+        BeelineNinePatch actor = new BeelineNinePatch(game.getAssetManager()
+                .createNinePatchStyle(new NinePatchStyleBuilder().withTexture(squarePath).build()),
+                100, 100 ,"Hello world!");
         Assert.assertEquals("Button was created", "Hello world!", actor.getText().toString());
 
         /**Add actor to a test screen**/
@@ -86,12 +91,13 @@ public class TestSimpleGame extends GameTest {
         PreGameLaunchConfig workingTestConfig;
 
         /**Works**/
-        game = new SimpleGame(200, 200, new BeelineAssetManager(createWorkingTestConfigWithOverrides()));
+        game = new SimpleGame(200, 200,
+                new BeelineAssetManager(createWorkingTestConfigWithOverridesBuilder().build()));
         game.create();
 
         /**No source font**/
-        workingTestConfig = createWorkingTestConfigWithOverrides();
-        workingTestConfig.fontSourceLocalFilePath = "dfg45dfg";
+        workingTestConfig = createWorkingTestConfigWithOverridesBuilder()
+                .withFontSourceLocalFilePath("dfg45dfg").build();
         game = new SimpleGame(200, 200, new BeelineAssetManager(workingTestConfig));
         try {
             game.create();
@@ -101,8 +107,8 @@ public class TestSimpleGame extends GameTest {
         }
 
         /**No source sprite directory**/
-        workingTestConfig = createWorkingTestConfigWithOverrides();
-        workingTestConfig.spriteSheetSourceLocalDirectoryPath = "dfg45dfg";
+        workingTestConfig = createWorkingTestConfigWithOverridesBuilder()
+                .withSpriteSheetSourceLocalDirectoryPath("dfg45dfg").build();
         game = new SimpleGame(200, 200, new BeelineAssetManager(workingTestConfig));
         try {
             game.create();
@@ -112,8 +118,8 @@ public class TestSimpleGame extends GameTest {
         }
 
         /**No sprites in source directory**/
-        workingTestConfig = createWorkingTestConfigWithOverrides();
-        workingTestConfig.spriteSheetSourceLocalDirectoryPath = "src/test/resources/simplegame/empty-img-in/";
+        workingTestConfig = createWorkingTestConfigWithOverridesBuilder()
+                .withSpriteSheetSourceLocalDirectoryPath("src/test/resources/simplegame/empty-img-in/").build();
         game = new SimpleGame(200, 200, new BeelineAssetManager(workingTestConfig));
         try {
             game.create();
@@ -126,8 +132,9 @@ public class TestSimpleGame extends GameTest {
     @Test
     public void testSimpleGameNoAssets() {
         /**Setup**/
-        PreGameLaunchConfig preLaunchConfig = new PreGameLaunchConfig();
-        preLaunchConfig.spriteSheetSourceLocalDirectoryPath = "dfsfdsfrg4534dfg4";
+        PreGameLaunchConfig preLaunchConfig = new PreGameLaunchConfigBuilder()
+                .withSpriteSheetSourceLocalDirectoryPath("dfsfdsfrg4534dfg4")
+                .build();
 
         BeelineAssetManager assets = new BeelineAssetManager(preLaunchConfig);
         BeelineGame game = new SimpleGame(200, 200, assets);
