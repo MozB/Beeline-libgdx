@@ -6,7 +6,7 @@ public class NinePatchStyle {
 
     NinePatchStyle(BeelineAssetPath texture, BeelineAssetPath pressedDownTexture, BeelineAssetPath disabledTexture, BeelineAssetPath checkedTexture, Color color, Color pressedDownColor, Color disabledColor, Color checkedColor,
                    Color fontColor, Color pressedDownFontColor, Color checkedFontColor, Color disabledFontColor,
-                   int border, int leftBorder, int rightBorder, int topBorder, int bottomBorder) {
+                   int leftBorder, int rightBorder, int topBorder, int bottomBorder) {
         this.texture = texture;
         this.pressedDownTexture = pressedDownTexture;
         this.disabledTexture = disabledTexture;
@@ -19,7 +19,6 @@ public class NinePatchStyle {
         this.pressedDownFontColor = pressedDownFontColor;
         this.checkedFontColor = checkedFontColor;
         this.disabledFontColor = disabledFontColor;
-        this.border = border;
         this.leftBorder = leftBorder;
         this.rightBorder = rightBorder;
         this.topBorder = topBorder;
@@ -38,7 +37,6 @@ public class NinePatchStyle {
     Color pressedDownFontColor;
     Color checkedFontColor;
     Color disabledFontColor;
-    Integer border;
     int leftBorder;
     int rightBorder;
     int topBorder;

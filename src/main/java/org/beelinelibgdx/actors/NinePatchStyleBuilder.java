@@ -15,7 +15,7 @@ public class NinePatchStyleBuilder {
     private Color pressedDownFontColor;
     private Color checkedFontColor;
     private Color disabledFontColor;
-    private int border;
+    private Integer border;
     private int leftBorder;
     private int rightBorder;
     private int topBorder;
@@ -107,8 +107,14 @@ public class NinePatchStyleBuilder {
     }
 
     public NinePatchStyle build() {
+        if (border != null) {
+            leftBorder = border;
+            rightBorder = border;
+            topBorder = border;
+            bottomBorder = border;
+        }
         return new NinePatchStyle(texture, pressedDownTexture, disabledTexture, checkedTexture, color, pressedDownColor,
                 disabledColor, checkedColor, fontColor, pressedDownFontColor, checkedFontColor, disabledFontColor,
-                border, leftBorder, rightBorder, topBorder, bottomBorder);
+                leftBorder, rightBorder, topBorder, bottomBorder);
     }
 }
