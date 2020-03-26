@@ -16,6 +16,7 @@ I have personally used Beeline-libgdx to make the following games.
 
 * Automatically creates spritesheets when source sprites change, with a simple API to load them
 * Automatically builds a provided font into the same spritesheet whenever it changes
+* Automatically manage the consistency between models and actors in your project when either are removed or added
 * Simple API for loading sounds and music into your game
 * Simple API for creation of Actors, Buttons, NinePatches and more, each with easily customisable styles in Java, no JSON
 * Simple API for loading and saving game states
