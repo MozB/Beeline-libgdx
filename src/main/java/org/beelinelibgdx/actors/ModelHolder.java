@@ -1,8 +1,8 @@
 package org.beelinelibgdx.actors;
 
-public interface ModelHolder<T> {
+public interface ModelHolder<M extends VisibleModel> {
 
-    T getModel();
+    M getModel();
 
     void refresh();
 
