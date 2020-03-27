@@ -56,6 +56,7 @@ public abstract class ModelAndActorVisibilityContract<M extends VisibleModel, A 
         }
 
         for (A visibleActor : toRemove) {
+            models.remove(visibleActor.getModel());
             onDeleteActor(visibleActor);
             visibleActors.remove(visibleActor);
             visibleActor.remove();
