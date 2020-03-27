@@ -20,14 +20,11 @@ public abstract class ModelAndActorVisibilityContract<M extends VisibleModel, A 
         this.visibleActors = visibleActors;
     }
 
-    public void forEachFrame(M model, A actor) {
-
-    }
-
     public void onDeleteActor(A actor) {
 
     }
 
+    public abstract void forEachFrame(M model, A actor);
     public abstract A createActor(M model);
 
     public void refresh() {
