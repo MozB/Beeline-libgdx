@@ -1,3 +1,5 @@
+<img src="https://github.com/MozB/Beeline-libgdx-examples/blob/master/beeline-in/img/logo.png" width="120" height="120">
+
 # Beeline-libgdx
 
 Beeline-libgdx is a library to aid flattening the learning curve of  libgdx, utilising Scene2D framework in libgdx it is intended to speed up early development of games and code that can be often boiler plate in  game development.  It's easy to use Beeline to create games from the  simple to the complex.  
