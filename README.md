@@ -8,7 +8,7 @@ I have personally used Beeline-libgdx to make the following games.
 * [Contract Chef](https://play.google.com/store/apps/details?id=com.moz.chef)
 * [Pixel Pirates](https://play.google.com/store/apps/details?id=com.moz.pixelpirates)
 * [Big Politics Inc: UK](https://play.google.com/store/apps/details?id=com.moz.politics)
-* [Big Poltiics Inc: USA](https://play.google.com/store/apps/details?id=com.moz.politics.us)
+* [Big Politics Inc: USA](https://play.google.com/store/apps/details?id=com.moz.politics.us)
 
 ## Key Features
 
