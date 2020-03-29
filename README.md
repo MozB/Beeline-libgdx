@@ -5,10 +5,10 @@ Beeline-libgdx is a library to aid flattening the learning curve of libgdx, util
 I have personally used Beeline-libgdx to make the following games.
 
 * [Tennis Superstars](https://play.google.com/store/apps/details?id=com.moz.tennis)
-* [Contract Chef](https://play.google.com/store/apps/details?id=com.moz.chef)
-* [Pixel Pirates](https://play.google.com/store/apps/details?id=com.moz.pixelpirates)
 * [Big Politics Inc: UK](https://play.google.com/store/apps/details?id=com.moz.politics)
 * [Big Politics Inc: USA](https://play.google.com/store/apps/details?id=com.moz.politics.us)
+* [Contract Chef](https://play.google.com/store/apps/details?id=com.moz.chef)
+* [Pixel Pirates](https://play.google.com/store/apps/details?id=com.moz.pixelpirates)
 
 ## Key Features
 
