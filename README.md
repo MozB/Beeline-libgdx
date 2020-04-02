@@ -49,3 +49,8 @@ project(":core") {
     }
 }
 ```
+Then remove the following line from the Desktop & HTML `build.gradle` if you are using those modules.
+
+```
+sourceCompatibility = 1.7
+```
