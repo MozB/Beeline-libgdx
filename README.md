@@ -37,6 +37,8 @@ I have personally used Beeline-libgdx to make the following games.
 * [Missle Command with Beeline-libgdx: Part 7 – How to lose the game!](https://trailblaze.games/2020/04/10/missle-command-with-beeline-libgdx-part-7-how-to-lose-the-game/)
 * [Missle Command with Beeline-libgdx: Part 8 – Scoring our game and reloading!](https://trailblaze.games/2020/04/11/missle-command-with-beeline-libgdx-part-8-scoring-our-game-and-reloading/)
 
+<img src="https://trailblaze.games/wp-content/uploads/2020/04/mygif-10.gif" width="500" height="300">
+
 ## Examples
 See https://github.com/MozB/Beeline-libgdx-examples for a full set of working example projects with Beeline-libgdx.
 
